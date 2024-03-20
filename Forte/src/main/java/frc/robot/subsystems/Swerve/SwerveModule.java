@@ -75,8 +75,8 @@ public class SwerveModule {
 
     
     public void resetToAbsolute()  {
-        Rotation2d absolutePosition = Rotation2d.fromDegrees(getAbsoluteEncoder().getDegrees() - angleOffset.getDegrees());
-        integratedAngleEncoder.setPosition(absolutePosition.getDegrees()); // TODO: CHECK CONVERSIONS
+        Rotation2d absolutePosition = getAbsoluteEncoder();
+        integratedAngleEncoder.setPosition(absolutePosition.getRotations()); // TODO: CHECK CONVERSIONS
         
     }
 
@@ -101,7 +101,7 @@ public class SwerveModule {
     }
 
     private Rotation2d getAngle(){
-       return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
+       return Rotation2d.fromRotations(integratedAngleEncoder.getPosition());
     }
 
     //TODO: DOUBLE CHECK UNSURE FOR SYNTAX OF CODE HERE
@@ -154,9 +154,8 @@ public class SwerveModule {
 
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(
-            driveEncoder.getPosition(),
-        //Conversions.neoToMeters(driveEncoder.getPosition(), Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio), 
-             getAngle()
+        Conversions.neoToMeters(driveEncoder.getPosition(), Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio), 
+        getAngle()
         );
     }
 

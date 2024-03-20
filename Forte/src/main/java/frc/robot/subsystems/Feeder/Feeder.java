@@ -4,12 +4,13 @@
 
 package frc.robot.subsystems.Feeder;
 
-import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -58,6 +59,11 @@ public class Feeder extends SubsystemBase {
       setIntakeSpeed(1.0);
       setIndexerSpeed(0.25);
     }
+  }
+
+  public void intakeFeedback(Joystick driver, Joystick operator){
+    driver.setRumble(RumbleType.kBothRumble, 0.5);
+    operator.setRumble(RumbleType.kBothRumble, 0.5);
   }
 
   public void eject(){
