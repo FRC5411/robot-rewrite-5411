@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.subsystems.Feeder.Feeder;
 // import frc.robot.subsystems.Winch;
 import frc.robot.subsystems.Swerve.Swerve;
+import frc.robot.commands.DriverIntakeFeedback;
 //import frc.robot.Constants.OperatorConstants;
 //import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopSwerve;
@@ -119,6 +120,7 @@ public class RobotContainer {
         opLeftTrigger.onFalse(new InstantCommand(() -> s_Feeder.stopFeed()));
         opRightTrigger.onTrue(new InstantCommand(() -> s_Feeder.smartFeed()));
         opRightTrigger.onFalse(new InstantCommand(() -> s_Feeder.stopFeed()));
+        opRightTrigger.whileTrue(new DriverIntakeFeedback(s_Feeder, driver, operator));
         //opX.onTrue(s_Feeder.setShooterToSpeaker());
     }
 

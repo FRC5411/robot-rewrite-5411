@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -61,6 +62,14 @@ public class Feeder extends SubsystemBase {
     }
   }
 
+  public boolean getIndexerSensor(){
+    return indexerSensor.get();
+  }
+
+  public boolean getIntakeSensor(){
+    return intakeSensor.get();
+  }
+
   public void intakeFeedback(Joystick driver, Joystick operator){
     driver.setRumble(RumbleType.kBothRumble, 0.5);
     operator.setRumble(RumbleType.kBothRumble, 0.5);
@@ -83,8 +92,18 @@ public class Feeder extends SubsystemBase {
   public void ampScore(){
     setIndexerSpeed(0.2);
   }
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+
+  public double currentIndexerAmp(){
+    return indexerMotor.getOutputCurrent();
   }
+  
+  @Override
+   public void periodic() {
+
+
+    SmartDashboard.putBoolean("Intake Sensor", getIntakeSensor());
+    SmartDashboard.putBoolean("Indexer Sensor", getIndexerSensor());
+    SmartDashboard.putNumber("Indexer Current Amp", currentIndexerAmp());
+    
+   }
 }
