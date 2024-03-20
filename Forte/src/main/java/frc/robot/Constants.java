@@ -61,6 +61,15 @@ public final class Constants {
 
     }
 
+    public static final class Feeder {
+        public static final int INTAKE_ID = 21;
+        public static final int INDEXER_ID = 22;
+        public static final int INTAKE_CURRENT_LIMIT = 40;
+        public static final int INDEXER_CURRENT_LIMIT = 30;
+        public static final int INTAKE_SENSOR_ID = 0;
+        public static final int INDEXER_SENSOR_ID = 1;
+    }
+
 
     public static final class Swerve {
         public static final int pigeonID = 10; //TODO: Change ID
@@ -116,7 +125,7 @@ public final class Constants {
 
         public static final double angleKP = 0.06;
         public static final double angleKI = 0.00;
-        public static final double angleKD = 0.02;
+        public static final double angleKD = 0.00;
         public static final double angleKFF = 0.00;
 
 
@@ -177,7 +186,7 @@ public final class Constants {
             public static final int driveMotorID = 13;
             public static final int angleMotorID = 17;
             public static final int absoluteEncoderPorts = 5;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees((0.325928 + 0.4)*360);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees((0.325928)*360);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, absoluteEncoderPorts, angleOffset);
         }
@@ -187,7 +196,7 @@ public final class Constants {
             public static final int driveMotorID = 14;
             public static final int angleMotorID = 18;
             public static final int absoluteEncoderPorts = 6; //MIGHT SWAP WITH 1
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees((0.090088+0.125)*360);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees((0.090088)*360);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, absoluteEncoderPorts, angleOffset);
         }
