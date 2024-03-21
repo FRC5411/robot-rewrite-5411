@@ -63,7 +63,7 @@ public class SwerveModule {
         driveController = mDriveMotor.getPIDController();
         configDriveMotor();
 
-        lastAngle = getState().angle;
+        resetToAbsolute();
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
