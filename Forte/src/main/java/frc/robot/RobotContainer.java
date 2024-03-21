@@ -11,30 +11,14 @@ import frc.robot.commands.DriverIntakeFeedback;
 //import frc.robot.Constants.OperatorConstants;
 //import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.lib.math.LauncherInterpolation;
 import frc.robot.lib.util.AxisButton;
-
-import java.time.Instant;
-
-import com.fasterxml.jackson.core.sym.Name;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
   
 /**
@@ -75,8 +59,6 @@ public class RobotContainer {
     // private final JoystickButton opRightStick = new JoystickButton(operator, XboxController.Button.kRightStick.value);
     // private final JoystickButton opY = new JoystickButton(operator, XboxController.Button.kY.value);
     // private final JoystickButton opA = new JoystickButton(operator, XboxController.Button.kA.value);
-    private final JoystickButton opB = new JoystickButton(operator, XboxController.Button.kB.value);
-    private final JoystickButton opX = new JoystickButton(operator, XboxController.Button.kX.value);
     // private final POVButton povUp = new POVButton(operator, 0);
     // private final POVButton povDown = new POVButton(operator, 180);
     // private final POVButton povRight = new POVButton(operator, 90);
@@ -84,7 +66,6 @@ public class RobotContainer {
     // private final JoystickButton opStart = new JoystickButton(operator, XboxController.Button.kStart.value);
     // private final JoystickButton opSelect = new JoystickButton(operator, XboxController.Button.kBack.value);
     // private final JoystickButton opLeftBumper = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
-    private final JoystickButton opRightBumper = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
      private final AxisButton opLeftTrigger = new AxisButton(operator, 2, 0.2);
      private final AxisButton opRightTrigger = new AxisButton(operator, 3, 0.2);
 
