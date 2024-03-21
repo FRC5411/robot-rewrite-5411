@@ -28,7 +28,7 @@ import frc.robot.lib.math.Conversions;
 
 public class SwerveModule {
     public int moduleNumber;
-    private Rotation2d angleOffset;
+    private final Rotation2d angleOffset;
     private Rotation2d lastAngle;
 
     private CANSparkMax mAngleMotor;
@@ -133,7 +133,7 @@ public class SwerveModule {
         mDriveMotor.restoreFactoryDefaults();
         CANSparkMaxUtil.setCANSparkMaxBusUsage(mAngleMotor, Usage.kAll);
         mDriveMotor.setSmartCurrentLimit(Constants.Swerve.driveContinuousCurrentLimit);
-        mDriveMotor.setInverted(Constants.Swerve.driveMotorInvert);
+        mDriveMotor.setInverted(true);
         mDriveMotor.setIdleMode(Constants.Swerve.driveNeutralMode);
         driveEncoder.setPositionConversionFactor(Constants.Swerve.driveConversionPositionFactor); 
         driveEncoder.setVelocityConversionFactor(Constants.Swerve.driveConversionVelocityFactor); 
