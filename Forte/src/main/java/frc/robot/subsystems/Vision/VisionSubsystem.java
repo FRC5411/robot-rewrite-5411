@@ -37,8 +37,7 @@ public final class VisionSubsystem extends SubsystemBase {
   private static List<Camera> CAMERAS;
   public static final List<CameraIdentifier> ALL_CAMERA_IDENTIFIERS = List.of(
       CameraIdentifier.SPEAKER_LEFT_CAMERA,
-      CameraIdentifier.SPEAKER_RIGHT_CAMERA,
-      CameraIdentifier.INTAKE_CAMERA);
+      CameraIdentifier.SPEAKER_RIGHT_CAMERA);
   // ---------------------------------------------------------------[Fields]----------------------------------------------------------------//
   private static VisionSubsystem Instance;
 
@@ -100,8 +99,7 @@ public final class VisionSubsystem extends SubsystemBase {
    */
   public enum CameraIdentifier {
     SPEAKER_LEFT_CAMERA((0)),
-    SPEAKER_RIGHT_CAMERA((1)),
-    INTAKE_CAMERA((2));
+    SPEAKER_RIGHT_CAMERA((1));
 
     private final int Value;
 
@@ -199,16 +197,16 @@ public final class VisionSubsystem extends SubsystemBase {
     return CAMERAS.get(Identifier.getValue()).getStandardDeviations();
   }
 
-  /**
-   * Provides the robot relative position to a given object based on the estimated
-   * position of this camera and a transformation assuming that.
-   * the desired object is the optimal target of this camera.
-   * 
-   * @return Position of the object relative to the field.
-   */
-  public static Optional<Pose2d> getObjectFieldPose() {
-    return CAMERAS.get(CameraIdentifier.INTAKE_CAMERA.getValue()).getObjectFieldPose();
-  }
+  // /**
+  //  * Provides the robot relative position to a given object based on the estimated
+  //  * position of this camera and a transformation assuming that.
+  //  * the desired object is the optimal target of this camera.
+  //  * 
+  //  * @return Position of the object relative to the field.
+  //  */
+  // public static Optional<Pose2d> getObjectFieldPose() {
+  //   return CAMERAS.get(CameraIdentifier.INTAKE_CAMERA.getValue()).getObjectFieldPose();
+  // }
 
   /**
    * Provides a list of robot-relative transformations to the best target within
