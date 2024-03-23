@@ -18,7 +18,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 // -----------------------------------------------------------------[Camera]----------------------------------------------------------------//
 /**

@@ -9,7 +9,7 @@ public class LauncherInterpolation {
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> launcherMap = new InterpolatingTreeMap<>();
 
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = new InterpolatingTreeMap<>();
-    private static final double PIGEON_OFFSET = 180;
+    // private static final double PIGEON_OFFSET = 180;
 
 // key = distance from speaker meters
 // value = rpm setpoint
