@@ -61,14 +61,6 @@ public final class Constants {
 
     }
 
-    public static final class Feeder {
-        public static final int INTAKE_ID = 21;
-        public static final int INDEXER_ID = 22;
-        public static final int INTAKE_CURRENT_LIMIT = 40;
-        public static final int INDEXER_CURRENT_LIMIT = 30;
-        public static final int INTAKE_SENSOR_ID = 0;
-        public static final int INDEXER_SENSOR_ID = 1;
-    }
 
 
     public static final class Swerve {

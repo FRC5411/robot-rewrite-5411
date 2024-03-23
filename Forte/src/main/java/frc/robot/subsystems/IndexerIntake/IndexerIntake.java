@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class IndexerIntake extends SubsystemBase {
   /** Creates a new Feeder. */
@@ -23,11 +22,11 @@ public class IndexerIntake extends SubsystemBase {
   private DigitalInput indexerSensor;
 
   public IndexerIntake() {
-    intakeMotor = new CANSparkMax(Constants.Feeder.INTAKE_ID, MotorType.kBrushless);
-    indexerMotor = new CANSparkMax(Constants.Feeder.INDEXER_ID, MotorType.kBrushless);
+    intakeMotor = new CANSparkMax(IndexerIntakeConstants.INTAKE_ID, MotorType.kBrushless);
+    indexerMotor = new CANSparkMax(IndexerIntakeConstants.INDEXER_ID, MotorType.kBrushless);
 
-    intakeSensor = new DigitalInput(Constants.Feeder.INTAKE_SENSOR_ID);
-    indexerSensor = new DigitalInput(Constants.Feeder.INDEXER_SENSOR_ID);
+    intakeSensor = new DigitalInput(IndexerIntakeConstants.INTAKE_SENSOR_ID);
+    indexerSensor = new DigitalInput(IndexerIntakeConstants.INDEXER_SENSOR_ID);
 
     config();
   }
@@ -35,14 +34,14 @@ public class IndexerIntake extends SubsystemBase {
   private void config(){
     indexerMotor.clearFaults();
     indexerMotor.restoreFactoryDefaults();
-    indexerMotor.setSmartCurrentLimit(Constants.Feeder.INDEXER_CURRENT_LIMIT);
+    indexerMotor.setSmartCurrentLimit(IndexerIntakeConstants.INDEXER_CURRENT_LIMIT);
     indexerMotor.setIdleMode(IdleMode.kBrake);
     indexerMotor.setInverted(false);
     indexerMotor.burnFlash();
 
     intakeMotor.clearFaults();
     intakeMotor.restoreFactoryDefaults();
-    intakeMotor.setSmartCurrentLimit(Constants.Feeder.INTAKE_CURRENT_LIMIT);
+    intakeMotor.setSmartCurrentLimit(IndexerIntakeConstants.INTAKE_CURRENT_LIMIT);
     intakeMotor.setIdleMode(IdleMode.kBrake);
     intakeMotor.setInverted(false);
     intakeMotor.burnFlash();
