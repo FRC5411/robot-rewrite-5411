@@ -6,6 +6,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -62,6 +68,7 @@ public class RobotContainer {
 
         indexerIntake = 
             new IndexerIntake();
+    
 
         shooter = new Shooter();
         break;
@@ -85,6 +92,18 @@ public class RobotContainer {
         break;
     }
   }
+
+  /**
+     * Use this method to define your button->command mappings. Buttons can be created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+
+
+    public CommandXboxController getDriveController(){
+        return pilotController;
+      }
 
   /** Register commands with PathPlanner and add default autos to chooser */
   private void configureAutonomous() {}
