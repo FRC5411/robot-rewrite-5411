@@ -6,12 +6,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -68,6 +64,7 @@ public class RobotContainer {
 
         indexerIntake = 
             new IndexerIntake();
+
     
 
         shooter = new Shooter();
@@ -124,13 +121,24 @@ public class RobotContainer {
 
       operator.leftTrigger().onTrue(new InstantCommand(() -> indexerIntake.eject()));
       operator.leftTrigger().onFalse(new InstantCommand(() -> indexerIntake.stopFeed()));
-      operator.rightTrigger().onTrue(new InstantCommand(() -> indexerIntake.smartFeed()));
+      operator.rightTrigger().onTrue(new InstantCommand(() -> indexerIntake.setIndexerSpeed(-1.0)));
+      operator.rightTrigger().onTrue(new InstantCommand(() -> indexerIntake.setIntakeSpeed(-1.0)));
       operator.rightTrigger().onFalse(new InstantCommand(() -> indexerIntake.stopFeed()));
       operator.leftBumper().onTrue(new InstantCommand(() -> indexerIntake.setIndexerSpeed(0.5)));
       operator.leftBumper().onFalse(new InstantCommand(() -> indexerIntake.setIndexerSpeed(0)));
       operator.rightTrigger().whileTrue(new DriverIntakeFeedback(indexerIntake, pilotController, operator));
 
-      operator.rightBumper().onTrue(new InstantCommand(() -> shooter. ));
+      pilotController.rightBumper().whileTrue(new InstantCommand(() -> shooter.movePivotSlowUp()));
+      pilotController.rightBumper().whileFalse(new InstantCommand(() -> shooter.movePivotZero()));
+      pilotController.leftBumper().whileTrue(new InstantCommand(() -> shooter.movePivotSlowDown()));
+      pilotController.leftBumper().whileFalse(new InstantCommand(() -> shooter.movePivotZero()));
+
+      operator.a().onTrue(new InstantCommand(() -> shooter.shootAmp()));
+      operator.a().onFalse(new InstantCommand(() -> shooter.zeroShoot()));
+      operator.b().onTrue(new InstantCommand(() -> shooter.shootSubwoofer()));
+      operator.b().onFalse(new InstantCommand(() -> shooter.zeroShoot()));
+      operator.x().onTrue(new InstantCommand(() -> shooter.shootFeed()));
+      operator.x().onFalse(new InstantCommand(() -> shooter.zeroShoot()));
   }
 
   public Command getAutonomousCommand() {

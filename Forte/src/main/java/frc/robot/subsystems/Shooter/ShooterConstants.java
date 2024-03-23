@@ -6,9 +6,9 @@ package frc.robot.subsystems.Shooter;
 
 /** Add your docs here. */
 public class ShooterConstants {
-    public static final Integer UPPER_ROLLER_PORT = 34;
-    public static final Integer LOWER_ROLLER_PORT = 35;
-    public static final Integer PIVOT_PORT = 32;
+    public static final Integer UPPER_ROLLER_PORT = 35;
+    public static final Integer LOWER_ROLLER_PORT = 34;
+    public static final Integer PIVOT_PORT = 22;
     public static final Integer PIVOT_ENCODER_PORT = 0;
 
     public static final Double PIVOT_OFFSET = 0.656761d;

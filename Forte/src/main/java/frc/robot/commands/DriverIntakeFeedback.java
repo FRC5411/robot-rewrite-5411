@@ -22,13 +22,13 @@ public class DriverIntakeFeedback extends Command{
 
     @Override
     public void execute() {
-        if (intake.IndexerSensorHasNote() || intake.IntakeSensorHasNote()) {
-            driver.getHID().setRumble(RumbleType.kBothRumble, 1);
-            operator.getHID().setRumble(RumbleType.kBothRumble, 1);
-        } else {
+        // if (intake.IndexerSensorHasNote() || intake.IntakeSensorHasNote()) {
+        //     driver.getHID().setRumble(RumbleType.kBothRumble, 1);
+        //     operator.getHID().setRumble(RumbleType.kBothRumble, 1);
+        // } else {
             driver.getHID().setRumble(RumbleType.kBothRumble, 0);
             operator.getHID().setRumble(RumbleType.kBothRumble, 0);
-        }
+       // }
     }
 
     @Override

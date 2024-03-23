@@ -25,8 +25,8 @@ public class IndexerIntake extends SubsystemBase {
     intakeMotor = new CANSparkMax(IndexerIntakeConstants.INTAKE_ID, MotorType.kBrushless);
     indexerMotor = new CANSparkMax(IndexerIntakeConstants.INDEXER_ID, MotorType.kBrushless);
 
-    intakeSensor = new DigitalInput(IndexerIntakeConstants.INTAKE_SENSOR_ID);
-    indexerSensor = new DigitalInput(IndexerIntakeConstants.INDEXER_SENSOR_ID);
+    // intakeSensor = new DigitalInput(IndexerIntakeConstants.INTAKE_SENSOR_ID);
+    // indexerSensor = new DigitalInput(IndexerIntakeConstants.INDEXER_SENSOR_ID);
 
     config();
   }
@@ -43,7 +43,7 @@ public class IndexerIntake extends SubsystemBase {
     intakeMotor.restoreFactoryDefaults();
     intakeMotor.setSmartCurrentLimit(IndexerIntakeConstants.INTAKE_CURRENT_LIMIT);
     intakeMotor.setIdleMode(IdleMode.kBrake);
-    intakeMotor.setInverted(false);
+    intakeMotor.setInverted(true);
     intakeMotor.burnFlash();
   }
 
@@ -57,27 +57,27 @@ public class IndexerIntake extends SubsystemBase {
   }
 
   //TODO: Check with Armaan
-  public void smartFeed(){
-    if(indexerSensor.get() && intakeSensor.get()){
-      setIntakeSpeed(0.5);
-      setIndexerSpeed(0.25);
-    }
-    else if(indexerSensor.get() && !intakeSensor.get()){
-      setIntakeSpeed(0.1);
-      setIndexerSpeed(0);
-    } else{
-      setIntakeSpeed(1.0);
-      setIndexerSpeed(0.25);
-    }
-  }
+  // public void smartFeed(){
+  //   if(indexerSensor.get() && intakeSensor.get()){
+  //     setIntakeSpeed(0.5);
+  //     setIndexerSpeed(0.25);
+  //   }
+  //   else if(indexerSensor.get() && !intakeSensor.get()){
+  //     setIntakeSpeed(0.1);
+  //     setIndexerSpeed(0);
+  //   } else{
+  //     setIntakeSpeed(1.0);
+  //     setIndexerSpeed(0.25);
+  //   }
+  // }
 
-  public boolean IndexerSensorHasNote(){
-    return indexerSensor.get();
-  }
+  // public boolean IndexerSensorHasNote(){
+  //   return indexerSensor.get();
+  // }
 
-  public boolean IntakeSensorHasNote(){
-    return intakeSensor.get();
-  }
+  // public boolean IntakeSensorHasNote(){
+  //   return intakeSensor.get();
+  // }
 
   public void intakeFeedback(Joystick driver, Joystick operator){
     driver.setRumble(RumbleType.kBothRumble, 0.5);
@@ -110,8 +110,8 @@ public class IndexerIntake extends SubsystemBase {
    public void periodic() {
 
 
-    SmartDashboard.putBoolean("Intake Sensor Note Present", IntakeSensorHasNote());
-    SmartDashboard.putBoolean("Indexer  Note Present", IndexerSensorHasNote());
+    // SmartDashboard.putBoolean("Intake Sensor Note Present", IntakeSensorHasNote());
+    // SmartDashboard.putBoolean("Indexer  Note Present", IndexerSensorHasNote());
     SmartDashboard.putNumber("Indexer Applied Output", currentIndexerAmp());
     
    }
