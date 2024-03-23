@@ -1,4 +1,4 @@
-package frc.robot.lib.math;
+package frc.robot.lib.util.math;
 
 import frc.robot.lib.Interpolation.InterpolatingDouble;
 import frc.robot.lib.Interpolation.InterpolatingTreeMap;

@@ -1,8 +1,8 @@
-package frc.robot.lib.math;
+package frc.robot.lib.util.math;
 
 import edu.wpi.first.math.geometry.Twist2d;
 
-public class EqualsUtil {
+public final class EqualsUtil {
   public static boolean epsilonEquals(double a, double b, double epsilon) {
     return (a - epsilon <= b) && (a + epsilon >= b);
   }

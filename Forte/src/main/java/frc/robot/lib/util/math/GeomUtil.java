@@ -1,5 +1,4 @@
-package frc.robot.utils.math;
-
+package frc.robot.lib.util.math;
 // Copyright (c) 2023 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
@@ -17,7 +16,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 /** Geometry utilities for working with translations, rotations, transforms, and poses. */
-public class GeomUtil {
+public final class GeomUtil {
   /**
    * Creates a pure translating transform
    *

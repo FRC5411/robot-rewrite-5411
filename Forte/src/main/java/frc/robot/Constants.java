@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
@@ -18,12 +19,21 @@ import frc.robot.lib.util.NEOSwerveConstants;
 import frc.robot.lib.util.SwerveModuleConstants;
 
 public final class Constants {
-
+    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : Mode.SIM;
     public static final boolean launcherRollerTuningMode = false;
     public static final boolean launcherPivotTuningMode = true;
     public static final boolean collectorTuningMode = false;
     public static final boolean swerveTuningMode = false;
     public static final double stickDeadband = 0.2;
+
+    public static enum Mode{
+
+        REAL,
+
+        SIM,
+
+        REPLAY
+    }
 
     public static final class Field {
         public static final double FIELD_WIDTH = 8.21;

@@ -36,6 +36,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 
 /** Swerve drive */
 public class Drive extends SubsystemBase {
@@ -89,11 +90,11 @@ public class Drive extends SubsystemBase {
     gyroIO = gyro;
 
     // Configure setpoint generator
-    setpointGenerator =
-        SwerveSetpointGenerator.builder()
-            .kinematics(KINEMATICS)
-            .moduleLocations(MODULE_TRANSLATIONS)
-            .build();
+    // setpointGenerator =
+    //     SwerveSetpointGenerator.builder()
+    //         .kinematics(KINEMATICS)
+    //         .moduleLocations(MODULE_TRANSLATIONS)
+    //         .build();
 
     // Configure PathPlanner
     AutoBuilder.configureHolonomic(
@@ -194,13 +195,13 @@ public class Drive extends SubsystemBase {
     SwerveModuleState[] optimizedSetpointStates = new SwerveModuleState[4];
 
     if (!areModulesOrienting) {
-      currentSetpoint =
-          setpointGenerator.generateSetpoint(MODULE_LIMITS, currentSetpoint, discreteSpeeds, 0.02);
+      // currentSetpoint =
+      //     setpointGenerator.generateSetpoint(MODULE_LIMITS, currentSetpoint, discreteSpeeds, 0.02);
 
       for (int i = 0; i < 4; i++) {
         // Optimized azimuth setpoint angles
-        optimizedSetpointStates[i] =
-            SwerveModuleState.optimize(currentSetpoint.moduleStates()[i], modules[i].getAngle());
+        // optimizedSetpointStates[i] =
+        //     SwerveModuleState.optimize(currentSetpoint.moduleStates()[i], modules[i].getAngle());
 
         // Prevent jittering from small joystick inputs or noise
         optimizedSetpointStates[i] =
