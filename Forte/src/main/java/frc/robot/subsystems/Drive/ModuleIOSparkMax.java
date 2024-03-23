@@ -4,11 +4,6 @@
 
 package frc.robot.subsystems.Drive;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -16,10 +11,14 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 
-/** Class to interact with the physical swerve module structure, SDS L2+ */
+/** Class to interact with the physical swerve module structure, SDS L3+ */
 public class ModuleIOSparkMax implements ModuleIO {
-  private final double DRIVE_GEAR_RATIO = 6.75 / 1.0;
+  private final double DRIVE_GEAR_RATIO = 5.357 / 1.0;
   private final double AZIMUTH_GEAR_RATIO = 150.0 / 7.0;
   private final double CIRCUMFRENCE_METERS = 2.0 * Math.PI * (5.08 / 100);
 
@@ -42,34 +41,34 @@ public class ModuleIOSparkMax implements ModuleIO {
     switch (module) {
       case 0:
         driveMotor = new CANSparkMax(11, MotorType.kBrushless);
-        azimuthMotor = new CANSparkMax(21, MotorType.kBrushless);
+        azimuthMotor = new CANSparkMax(15, MotorType.kBrushless);
 
-        angleEncoder = new CANcoder(31, "CTREBUS");
-        angleOffset = Rotation2d.fromRotations(0.599365);
+        angleEncoder = new CANcoder(3, "drivetrain");
+        angleOffset = Rotation2d.fromRotations(0.601318);
 
         break;
       case 1:
         driveMotor = new CANSparkMax(12, MotorType.kBrushless);
-        azimuthMotor = new CANSparkMax(22, MotorType.kBrushless);
+        azimuthMotor = new CANSparkMax(16, MotorType.kBrushless);
 
-        angleEncoder = new CANcoder(32, "CTREBUS");
-        angleOffset = Rotation2d.fromRotations(-0.390137);
+        angleEncoder = new CANcoder(4, "drivetrain");
+        angleOffset = Rotation2d.fromRotations(0.823486);
 
         break;
       case 2:
         driveMotor = new CANSparkMax(13, MotorType.kBrushless);
-        azimuthMotor = new CANSparkMax(23, MotorType.kBrushless);
+        azimuthMotor = new CANSparkMax(17, MotorType.kBrushless);
 
-        angleEncoder = new CANcoder(33, "CTREBUS");
-        angleOffset = Rotation2d.fromRotations(0.288574);
+        angleEncoder = new CANcoder(5, "drivetrain");
+        angleOffset = Rotation2d.fromRotations(0.291992);
 
         break;
       case 3:
         driveMotor = new CANSparkMax(14, MotorType.kBrushless);
-        azimuthMotor = new CANSparkMax(24, MotorType.kBrushless);
+        azimuthMotor = new CANSparkMax(18, MotorType.kBrushless);
 
-        angleEncoder = new CANcoder(34, "CTREBUS");
-        angleOffset = Rotation2d.fromRotations(-0.275879);
+        angleEncoder = new CANcoder(6, "drivetrain");
+        angleOffset = Rotation2d.fromRotations(-0.416504);
 
         break;
       default:
@@ -91,7 +90,7 @@ public class ModuleIOSparkMax implements ModuleIO {
     driveMotor.setInverted(false);
     azimuthMotor.setInverted(true);
 
-    driveMotor.setSmartCurrentLimit(40);
+    driveMotor.setSmartCurrentLimit(50);
     driveMotor.enableVoltageCompensation(12.0);
     azimuthMotor.setSmartCurrentLimit(30);
     azimuthMotor.enableVoltageCompensation(12.0);
@@ -145,15 +144,13 @@ public class ModuleIOSparkMax implements ModuleIO {
         Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValueAsDouble())
             .minus(angleOffset);
     inputs.azimuthPosition =
-        Rotation2d.fromRotations(azimuthEncoder.getPosition() / AZIMUTH_GEAR_RATIO);
+        Rotation2d.fromRotations(azimuthEncoder.getPosition() / AZIMUTH_GEAR_RATIO % 360);
     inputs.azimuthVelocityRPS =
         Units.rotationsPerMinuteToRadiansPerSecond(azimuthEncoder.getVelocity())
             / AZIMUTH_GEAR_RATIO;
     inputs.azimuthAppliedVolts = azimuthMotor.getAppliedOutput() * azimuthMotor.getBusVoltage();
     inputs.azimuthCurrentAmps = new double[] {azimuthMotor.getOutputCurrent()};
     inputs.azimuthTemperatureCelsius = new double[] {azimuthMotor.getMotorTemperature()};
-
-
   }
 
   @Override
@@ -202,6 +199,7 @@ public class ModuleIOSparkMax implements ModuleIO {
     }
   }
 
+  /** Update the tunable numbers if they've changed */
 
   /** Reset the relative azimuth encoder to the absolute position */
   private void resetAzimuthEncoder() {
