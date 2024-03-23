@@ -1,21 +1,22 @@
 package frc.robot.subsystems.Drive;
 
-import static frc.robot.utils.math.EqualsUtil.*;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.utils.math.EqualsUtil;
-import frc.robot.utils.math.GeomUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
+
+import frc.robot.lib.math.*;
+
 
 /**
  * "Inspired" by FRC team 254. See the license file in the root directory of this project.
@@ -393,4 +394,3 @@ public class SwerveSetpointGenerator {
     return new SwerveSetpoint(retSpeeds, retStates);
   }
 }
-

@@ -83,4 +83,3 @@ public class ModuleIOSim implements ModuleIO {
     setAzimuthVolts(feedbackOutput);
   }
 }
-
