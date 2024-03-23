@@ -4,21 +4,16 @@
 
 package frc.robot;
 
-import frc.robot.subsystems.Feeder.Feeder;
-// import frc.robot.subsystems.Winch;
-import frc.robot.subsystems.Swerve.Swerve;
+import frc.robot.subsystems.IndexerIntake.IndexerIntake;
+// import frc.robot.subsystems.Winch; 
 import frc.robot.commands.DriverIntakeFeedback;
-//import frc.robot.Constants.OperatorConstants;
-//import frc.robot.commands.Autos;
-import frc.robot.commands.TeleopSwerve;
-import frc.robot.lib.util.AxisButton;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
   
 /**
@@ -28,64 +23,16 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
-    private final Swerve s_Swerve = new Swerve();
-    private final Feeder s_Feeder = new Feeder();
+    private final IndexerIntake IndexerIntake = new IndexerIntake();
     private SendableChooser<Command> autoChooser;
 
 
-    private final int translationAxis = XboxController.Axis.kLeftY.value;
-    private final int strafeAxis = XboxController.Axis.kLeftX.value;
-    private final int rotationAxis = XboxController.Axis.kRightX.value;
-
-    private final Joystick driver = new Joystick(0);
-    private final Joystick operator = new Joystick(1);
-    // The robot's subsystems and commands are defined here...
-    // private final JoystickButton rotateWithTag = new JoystickButton(driver, XboxController.Button.kRightStick.value);
-    // //private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-    // private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kLeftStick.value);
-    // private final JoystickButton driveA = new JoystickButton(driver, XboxController.Button.kA.value);
-    // private final JoystickButton driveY = new JoystickButton(driver, XboxController.Button.kY.value);
-    // private final JoystickButton driveB = new JoystickButton(driver, XboxController.Button.kB.value);
-    // private final JoystickButton driveX = new JoystickButton(driver, XboxController.Button.kX.value);
-    //  private final JoystickButton driveLeftBumper = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-    // private final JoystickButton driveRightBumper = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
-    // private final JoystickButton driveStart = new JoystickButton(driver, XboxController.Button.kStart.value);
-    // private final JoystickButton driveSelect = new JoystickButton(driver, XboxController.Button.kBack.value);
-    // private final AxisButton driveLeftTrigger = new AxisButton(driver, 2, 0.5);
-    // private final AxisButton driveRightTrigger = new AxisButton(driver, 3, 0.5);
-
-    // private final JoystickButton opLeftStick = new JoystickButton(operator, XboxController.Button.kLeftStick.value);
-    // private final JoystickButton opRightStick = new JoystickButton(operator, XboxController.Button.kRightStick.value);
-    // private final JoystickButton opY = new JoystickButton(operator, XboxController.Button.kY.value);
-    // private final JoystickButton opA = new JoystickButton(operator, XboxController.Button.kA.value);
-    // private final POVButton povUp = new POVButton(operator, 0);
-    // private final POVButton povDown = new POVButton(operator, 180);
-    // private final POVButton povRight = new POVButton(operator, 90);
-    // private final POVButton povLeft = new POVButton(operator, 270);
-    // private final JoystickButton opStart = new JoystickButton(operator, XboxController.Button.kStart.value);
-    // private final JoystickButton opSelect = new JoystickButton(operator, XboxController.Button.kBack.value);
-    // private final JoystickButton opLeftBumper = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
-     private final AxisButton opLeftTrigger = new AxisButton(operator, 2, 0.2);
-     private final AxisButton opRightTrigger = new AxisButton(operator, 3, 0.2);
-
-
-
-
+    private final CommandXboxController driver = new CommandXboxController(0);
+    private final CommandXboxController operator = new CommandXboxController(1);
+   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-        s_Swerve.setDefaultCommand(
-            new TeleopSwerve(
-                s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis), 
-                () -> false));
-
-       
-        configureButtonBindings();
-
-        
+    configureButtonBindings();
     }
 
     /**
@@ -97,15 +44,15 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         //zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro(), s_Swerve));
-        opLeftTrigger.onTrue(new InstantCommand(() -> s_Feeder.eject()));
-        opLeftTrigger.onFalse(new InstantCommand(() -> s_Feeder.stopFeed()));
-        opRightTrigger.onTrue(new InstantCommand(() -> s_Feeder.smartFeed()));
-        opRightTrigger.onFalse(new InstantCommand(() -> s_Feeder.stopFeed()));
-        opRightTrigger.whileTrue(new DriverIntakeFeedback(s_Feeder, driver, operator));
+        operator.leftTrigger().onTrue(new InstantCommand(() -> IndexerIntake.eject()));
+        operator.leftTrigger().onFalse(new InstantCommand(() -> IndexerIntake.stopFeed()));
+        operator.rightTrigger().onTrue(new InstantCommand(() -> IndexerIntake.smartFeed()));
+        operator.rightTrigger().onFalse(new InstantCommand(() -> IndexerIntake.stopFeed()));
+        operator.rightTrigger().whileTrue(new DriverIntakeFeedback(IndexerIntake, driver, operator));
         //opX.onTrue(s_Feeder.setShooterToSpeaker());
     }
 
-    public Joystick getDriveController(){
+    public CommandXboxController getDriveController(){
         return driver;
       }
 
