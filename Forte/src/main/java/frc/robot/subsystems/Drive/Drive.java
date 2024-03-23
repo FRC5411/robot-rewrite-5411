@@ -44,7 +44,7 @@ public class Drive extends SubsystemBase {
   public static final double TRACK_WIDTH_Y_M = Units.inchesToMeters(29.5);
   public static final double DRIVEBASE_RADIUS_M =
       Math.hypot(TRACK_WIDTH_X_M / 2.0, TRACK_WIDTH_Y_M / 2.0);
-  public static final double MAX_LINEAR_SPEED_MPS = Units.feetToMeters(14.0);
+  public static final double MAX_LINEAR_SPEED_MPS = Units.feetToMeters(19.1);
   public static final double MAX_ANGULAR_SPEED_MPS = MAX_LINEAR_SPEED_MPS / DRIVEBASE_RADIUS_M;
   // Second argument is the max accel
   public static final ModuleLimits MODULE_LIMITS =
@@ -54,6 +54,17 @@ public class Drive extends SubsystemBase {
   private final SwerveDriveKinematics KINEMATICS = getKinematics();
   private ChassisSpeeds desiredChassisSpeeds = new ChassisSpeeds();
 
+  // private SwerveSetpoint currentSetpoint =
+  //     new SwerveSetpoint(
+  //         new ChassisSpeeds(),
+  //         new SwerveModuleState[] {
+  //           new SwerveModuleState(),
+  //           new SwerveModuleState(),
+  //           new SwerveModuleState(),
+  //           new SwerveModuleState()
+  //         });
+  // private SwerveSetpointGenerator setpointGenerator =
+  //     new SwerveSetpointGenerator(KINEMATICS, MODULE_TRANSLATIONS);
   private boolean areModulesOrienting = false;
 
   private GyroIO gyroIO;
@@ -130,6 +141,11 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Logger.recordOutput("FrontLeft Module", modules[0].getAbsoluteAngle());
+    // Logger.recordOutput("FrontRight Module", modules[1].getAbsoluteAngle());
+    // Logger.recordOutput("BackLeft Module", modules[2].getAbsoluteAngle());
+    // Logger.recordOutput("BackRight Module", modules[3].getAbsoluteAngle());
+
     gyroIO.updateInputs(gyroIOInputs);
     for (var module : modules) {
       module.updateInputs();
@@ -193,29 +209,6 @@ public class Drive extends SubsystemBase {
         setpointStates, MAX_LINEAR_SPEED_MPS); // Normalize speeds
 
     SwerveModuleState[] optimizedSetpointStates = new SwerveModuleState[4];
-
-    if (!areModulesOrienting) {
-      // currentSetpoint =
-      //     setpointGenerator.generateSetpoint(MODULE_LIMITS, currentSetpoint, discreteSpeeds, 0.02);
-
-      for (int i = 0; i < 4; i++) {
-        // Optimized azimuth setpoint angles
-        // optimizedSetpointStates[i] =
-        //     SwerveModuleState.optimize(currentSetpoint.moduleStates()[i], modules[i].getAngle());
-
-        // Prevent jittering from small joystick inputs or noise
-        optimizedSetpointStates[i] =
-            (Math.abs(optimizedSetpointStates[i].speedMetersPerSecond / MAX_LINEAR_SPEED_MPS)
-                    > 0.01)
-                ? modules[i].setDesiredState(optimizedSetpointStates[i])
-                : modules[i].setDesiredState(
-                    new SwerveModuleState(
-                        optimizedSetpointStates[i].speedMetersPerSecond, modules[i].getAngle()));
-
-        // Run state
-        modules[i].setDesiredState(optimizedSetpointStates[i]);
-      }
-    } else {
       for (int i = 0; i < 4; i++) {
         optimizedSetpointStates[i] =
             modules[i].setDesiredState(
@@ -223,9 +216,10 @@ public class Drive extends SubsystemBase {
       }
     }
 
-    Logger.recordOutput("Drive/Swerve/Setpoints", setpointStates);
-    Logger.recordOutput("Drive/Swerve/SetpointsOptimized", optimizedSetpointStates);
-  }
+    // Logger.recordOutput("Drive/Swerve/Setpoints", setpointStates);
+    // Logger.recordOutput("Drive/Swerve/SetpointsOptimized", optimizedSetpointStates);
+  
+
 
   /** Custom method for discretizing swerve speeds */
   private ChassisSpeeds discretize(ChassisSpeeds speeds) {

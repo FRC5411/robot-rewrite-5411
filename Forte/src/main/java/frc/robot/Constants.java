@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import frc.robot.lib.util.NEOSwerveConstants;
-import frc.robot.lib.util.SwerveModuleConstants;
 
 public final class Constants {
     public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : Mode.SIM;

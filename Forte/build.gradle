@@ -17,7 +17,7 @@ project.setGroup('org.talonrobotics')
 project.setVersion('1.0.0-COMPETITION')
 
 application {
-  mainClass.set('org.robotalons.crescendo.Main')
+  mainClass.set('frc.robot.Main')
 }
 
 if (hasProperty('buildScan')) {
