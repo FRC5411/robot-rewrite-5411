@@ -121,7 +121,8 @@ public class RobotContainer {
               robotDrive,
               () -> -pilotController.getLeftY(),
               () -> -pilotController.getLeftX(),
-              () -> pilotController.getRightX()));
+              () -> pilotController.getRightX(),
+              () -> pilotController.x().getAsBoolean()));
 
     operator.b().whileTrue(shooter.shooterSubwoofer());
     operator.b().whileFalse(shooter.shooterIdle());
@@ -149,14 +150,6 @@ public class RobotContainer {
     operator.leftTrigger().onFalse(indexerIntake.INTAKE(0));
 
     pilotController.a().onTrue(robotDrive.gyroReset());
-
-    pilotController.x().onTrue(
-      Commands.runOnce(
-        () -> robotDrive.setPose(
-          new Pose2d(robotDrive.getPoseEstimate().getTranslation(), new Rotation2d())), robotDrive).ignoringDisable(true));
-
-
-
   }
 
   public Command getAutonomousCommand() {
