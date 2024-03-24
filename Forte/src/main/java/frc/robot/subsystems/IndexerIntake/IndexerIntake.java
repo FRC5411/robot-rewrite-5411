@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -104,6 +107,37 @@ public class IndexerIntake extends SubsystemBase {
 
   public double currentIndexerAmp(){
     return indexerMotor.getOutputCurrent();
+  }
+
+  public Command rumbler(Joystick driver, Joystick operator){
+    return new InstantCommand(() -> intakeFeedback(driver, operator));
+  }
+
+  public Command INTAKE(double demand){
+    return new ParallelCommandGroup(
+      setIntake(demand),
+      setIndexer(demand)
+    );
+  }
+
+  public Command setIntake(double demand){
+    return new InstantCommand(() -> setIntakeSpeed(demand));
+  }
+
+  public Command setIndexer(double demand){
+    return new InstantCommand(() -> setIndexerSpeed(demand));
+  }
+
+  public Command stopIntaker(){
+    return new InstantCommand(() -> stopFeed());
+  }
+
+  public Command ejectIntake(){
+    return new InstantCommand(() -> eject());
+  }
+
+  public Command ampIntake(){
+    return new InstantCommand(() -> ampScore());
   }
   
   @Override

@@ -4,12 +4,19 @@
 
 package frc.robot.subsystems.Shooter;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -24,8 +31,7 @@ public class Shooter extends SubsystemBase {
   private DutyCycleEncoder pivotEncoder;
   private TalonFX topMotor;
   private TalonFX bottomMotor;
-  private double pivotGearRatio; 
-  private ProfiledPIDController pivotController;
+  private double pivotGearRatio;
   
   public Shooter() {
     pivotMotor = new CANSparkMax(ShooterConstants.PIVOT_PORT, MotorType.kBrushless);
@@ -33,19 +39,12 @@ public class Shooter extends SubsystemBase {
     bottomMotor = new TalonFX(ShooterConstants.LOWER_ROLLER_PORT, "drivetrain");
     pivotEncoder = new DutyCycleEncoder(ShooterConstants.PIVOT_ENCODER_PORT);
 
-    pivotController = new ProfiledPIDController(
-      ShooterConstants.PIVOT_P,
-      ShooterConstants.PIVOT_I,
-      ShooterConstants.PIVOT_D, 
-      new TrapezoidProfile.Constraints(2, 2));
-
-    pivotGearRatio =  1 / 144;
-
+    pivotGearRatio =  1.0 / 144.0;
     config();
   }
 
   public double getPivotAngle(){
-    return (pivotEncoder.getAbsolutePosition() * pivotGearRatio * 360 ) - ShooterConstants.PIVOT_OFFSET;
+    return (-pivotEncoder.getAbsolutePosition() * 360) + ShooterConstants.PIVOT_OFFSET;
   }
 
   public void shootSubwoofer(){
@@ -54,41 +53,146 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shootFeed(){
-    topMotor.set(0.4);
-    bottomMotor.set(0.4);
+    topMotor.set(0.45);
+    bottomMotor.set(0.45);
   }
 
   public void shootAmp(){
     topMotor.set(0);
-    bottomMotor.set(0.3);
-  }  
-
-  public void zeroShoot(){
+    bottomMotor.set(0.18);
+  }
+  
+  public void motorZero(){
     topMotor.set(0);
     bottomMotor.set(0);
+    pivotMotor.set(0);
   }
 
-  public void reverseShoot(){
+  public void reverse(){
     topMotor.set(0.2);
     bottomMotor.set(0.2);
   }
 
-  public void PIDMovePivot(double setpoint){
-    pivotMotor.set(pivotController.calculate(getPivotAngle(), setpoint));
+  public double getShooterVelocity(){
+    return topMotor.getVelocity().getValueAsDouble();
   }
 
-  public void movePivotSlowUp(){
-    pivotMotor.set(0.2);
+  public void setShooterVelocity(double demand){
+    topMotor.setControl(new VelocityDutyCycle((demand / (60d))));
+    bottomMotor.setControl(new VelocityDutyCycle((demand / (60d))));
   }
 
-  public void movePivotSlowDown(){
-    pivotMotor.set(-0.2);
+
+  public Command shooterPID(double setpoint) {
+    ProfiledPIDController pivotController;
+
+    pivotController = new ProfiledPIDController(
+      ShooterConstants.PIVOT_P,
+      ShooterConstants.PIVOT_I,
+      ShooterConstants.PIVOT_D, 
+      new TrapezoidProfile.Constraints(200, 200));
+
+    return new FunctionalCommand(
+      () -> {
+        pivotController.reset(getPivotAngle());
+      }, 
+      () -> {
+        pivotMotor.set(-pivotController.calculate(getPivotAngle(), setpoint));
+      }, 
+      (interrupted) -> {
+
+      }, 
+      () -> pivotController.atGoal(), 
+      this
+      );
+  }
+//TODO: CHECK U SLAVE
+  public Command shooterRPM(double setpoint){
+    ProfiledPIDController RPMController;
+    RPMController = new ProfiledPIDController(
+      ShooterConstants.PIVOT_P,
+      ShooterConstants.PIVOT_I,
+      ShooterConstants.PIVOT_D, 
+      new TrapezoidProfile.Constraints(900, 900));
+
+    return new FunctionalCommand(
+      () -> {
+        RPMController.reset(getShooterVelocity());
+      }, 
+      () -> {
+        setShooterVelocity((-RPMController.calculate(getPivotAngle(), setpoint)));
+      }, 
+      (interrupted) -> {
+
+      }, 
+      () -> RPMController.atGoal(), 
+      this
+      );
+  } 
+
+  public Command shooterAmp(){
+    return new ParallelCommandGroup(
+      shooterPID(ShooterConstants.PIVOT_AMP_ANGLE),
+      shootRPMAmp()
+    );
   }
 
-  public void movePivotZero(){
-    pivotMotor.set(0);
+  public Command shooterIdle(){
+    return new ParallelCommandGroup(
+      shooterPID(ShooterConstants.PIVOT_IDLE_ANGLE),
+      zeroShoot()
+    );
   }
 
+  public Command shooterSubwoofer(){
+    return new ParallelCommandGroup(
+      shooterPID(ShooterConstants.PIVOT_SUBWOOFER_ANGLE),
+      shootRPMSubwoofer()
+    );
+  }
+
+  public Command shooterFeed(){
+    return new ParallelCommandGroup(
+      shooterPID(ShooterConstants.PIVOT_SUBWOOFER_ANGLE),
+      shootRPMFeed()
+    );
+  }
+
+  public Command shootRPMAmp(){
+    return new InstantCommand(() -> shootAmp());
+  }
+
+  public Command shootRPMFeed(){
+    return new InstantCommand(() -> shootFeed());
+  }
+
+  public Command shootRPMSubwoofer(){
+    return new InstantCommand(() -> shootSubwoofer());
+  }
+
+  public Command reverseShoot(){
+    return new InstantCommand(() -> reverse());
+  }
+
+  public Command zeroShoot(){
+    return new InstantCommand(() -> motorZero());
+  }
+
+  public Command movePivotSlowUp(){
+    return new InstantCommand(() -> pivotMotor.set(0.3));
+  }
+
+  public Command movePivotSlowDown(){
+    return new InstantCommand(() -> pivotMotor.set(-0.3));
+  }
+
+  public Command movePivotZero(){
+    return new InstantCommand(() -> pivotMotor.set(0));
+  }
+
+  public Command setShooterRPM(double demand){
+    return new InstantCommand(() -> setShooterVelocity(demand));
+  }
 
   private void config(){
     pivotMotor.clearFaults();
@@ -111,6 +215,9 @@ public class Shooter extends SubsystemBase {
   
   @Override
    public void periodic() {
-    Logger.recordOutput("Shooter Angle Degrees", getPivotAngle());
+    SmartDashboard.putNumber("Shooter Angle Degrees", getPivotAngle());
+    SmartDashboard.putNumber("Target Setpoint man", ShooterConstants.PIVOT_SUBWOOFER_ANGLE);
+    SmartDashboard.putNumber("Shooter RPM", getShooterVelocity());
+    SmartDashboard.putNumber("Shooter RPM Setpoint", 20);
    }
 }

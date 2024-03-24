@@ -6,9 +6,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -24,6 +27,7 @@ import frc.robot.subsystems.Drive.ModuleIOSim;
 import frc.robot.subsystems.Drive.ModuleIOSparkMax;
 import frc.robot.subsystems.IndexerIntake.IndexerIntake;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterConstants;
 
 public class RobotContainer {
   private Drive robotDrive;
@@ -117,28 +121,42 @@ public class RobotContainer {
               robotDrive,
               () -> -pilotController.getLeftY(),
               () -> -pilotController.getLeftX(),
-              () -> -pilotController.getRightX()));
+              () -> pilotController.getRightX()));
 
-      operator.leftTrigger().onTrue(new InstantCommand(() -> indexerIntake.eject()));
-      operator.leftTrigger().onFalse(new InstantCommand(() -> indexerIntake.stopFeed()));
-      operator.rightTrigger().onTrue(new InstantCommand(() -> indexerIntake.setIndexerSpeed(-1.0)));
-      operator.rightTrigger().onTrue(new InstantCommand(() -> indexerIntake.setIntakeSpeed(-1.0)));
-      operator.rightTrigger().onFalse(new InstantCommand(() -> indexerIntake.stopFeed()));
-      operator.leftBumper().onTrue(new InstantCommand(() -> indexerIntake.setIndexerSpeed(0.5)));
-      operator.leftBumper().onFalse(new InstantCommand(() -> indexerIntake.setIndexerSpeed(0)));
-      operator.rightTrigger().whileTrue(new DriverIntakeFeedback(indexerIntake, pilotController, operator));
+    operator.b().whileTrue(shooter.shooterSubwoofer());
+    operator.b().whileFalse(shooter.shooterIdle());
 
-      pilotController.rightBumper().whileTrue(new InstantCommand(() -> shooter.movePivotSlowUp()));
-      pilotController.rightBumper().whileFalse(new InstantCommand(() -> shooter.movePivotZero()));
-      pilotController.leftBumper().whileTrue(new InstantCommand(() -> shooter.movePivotSlowDown()));
-      pilotController.leftBumper().whileFalse(new InstantCommand(() -> shooter.movePivotZero()));
+    //TODO: Podium shot
+    // operator.a().whileTrue(shooter.shooter());
+    // operator.a().whileFalse(shooter.zeroShoot());
 
-      operator.a().onTrue(new InstantCommand(() -> shooter.shootAmp()));
-      operator.a().onFalse(new InstantCommand(() -> shooter.zeroShoot()));
-      operator.b().onTrue(new InstantCommand(() -> shooter.shootSubwoofer()));
-      operator.b().onFalse(new InstantCommand(() -> shooter.zeroShoot()));
-      operator.x().onTrue(new InstantCommand(() -> shooter.shootFeed()));
-      operator.x().onFalse(new InstantCommand(() -> shooter.zeroShoot()));
+    operator.x().whileTrue(shooter.shooterAmp());
+    operator.x().whileFalse(shooter.shooterIdle());
+
+    operator.y().whileTrue(shooter.shooterFeed());
+    operator.y().whileFalse(shooter.shooterIdle());
+
+    operator.rightBumper().onTrue(indexerIntake.INTAKE(1));
+    operator.rightBumper().onFalse(indexerIntake.INTAKE(0));
+
+    operator.leftBumper().onTrue(indexerIntake.INTAKE(-1));
+    operator.leftBumper().onFalse(indexerIntake.INTAKE(0));
+
+    operator.rightTrigger().onTrue(indexerIntake.INTAKE(1));
+    operator.rightTrigger().onFalse(indexerIntake.INTAKE(0));
+
+    operator.leftTrigger().onTrue(indexerIntake.ampIntake());
+    operator.leftTrigger().onFalse(indexerIntake.INTAKE(0));
+
+    pilotController.a().onTrue(robotDrive.gyroReset());
+
+    pilotController.x().onTrue(
+      Commands.runOnce(
+        () -> robotDrive.setPose(
+          new Pose2d(robotDrive.getPoseEstimate().getTranslation(), new Rotation2d())), robotDrive).ignoringDisable(true));
+
+
+
   }
 
   public Command getAutonomousCommand() {
