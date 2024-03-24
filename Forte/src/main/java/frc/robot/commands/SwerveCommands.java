@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 
 import org.littletonrobotics.junction.Logger;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -28,7 +29,7 @@ import frc.robot.subsystems.Drive.Drive;
 /** Class to hold all of the commands for the Drive */
 public class SwerveCommands {
   private static final double DEADBAND = 0.1;
-  private static final boolean IS_FIELD = false;
+  public static boolean IS_FIELD = false;
 
   private static Command currentCommand = null;
   private static boolean isAtYawGoal = false;
@@ -40,7 +41,8 @@ public class SwerveCommands {
       Drive robotDrive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier thetaSupplier) {
+      DoubleSupplier thetaSupplier,
+      BooleanSupplier feildSupplier) {
     return Commands.run(
         () -> {
           // Forward, backward
@@ -52,6 +54,8 @@ public class SwerveCommands {
               new Rotation2d(xSupplier.getAsDouble(), ySupplier.getAsDouble());
           // Rotation
           double theta = MathUtil.applyDeadband(thetaSupplier.getAsDouble(), DEADBAND);
+
+          IS_FIELD = feildSupplier.getAsBoolean();
 
           // Square inputs
           linearMagnitude *= linearMagnitude;
