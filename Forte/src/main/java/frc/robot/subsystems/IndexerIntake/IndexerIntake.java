@@ -100,6 +100,10 @@ public class IndexerIntake extends SubsystemBase {
     return indexerMotor.getOutputCurrent();
   }
 
+  public double currentIntakeAmp(){
+    return intakeMotor.getOutputCurrent();
+  }
+
   public Command rumbler(Joystick driver, Joystick operator){
     return new InstantCommand(() -> intakeFeedback(driver, operator));
   }
@@ -143,6 +147,7 @@ public class IndexerIntake extends SubsystemBase {
     // SmartDashboard.putBoolean("Intake Sensor Note Present", IntakeSensorHasNote());
     // SmartDashboard.putBoolean("Indexer  Note Present", IndexerSensorHasNote());
     SmartDashboard.putNumber("Indexer Applied Output", currentIndexerAmp());
+    SmartDashboard.putNumber("Intake Applied Output", currentIntakeAmp());
     
    }
 }

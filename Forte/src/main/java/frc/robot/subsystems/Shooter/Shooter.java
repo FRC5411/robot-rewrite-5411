@@ -5,7 +5,9 @@
 package frc.robot.subsystems.Shooter;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,6 +49,20 @@ public class Shooter extends SubsystemBase {
     return (-pivotEncoder.getAbsolutePosition() * 360) + ShooterConstants.PIVOT_OFFSET;
   }
 
+  public double getPivotAngleRadians(){
+    return (getPivotAngle() * Math.PI / 180);
+  }
+
+  public double getPivotVelocity(){
+    return pivotMotor.getEncoder().getVelocity();
+  }
+
+  public void shootWing(){
+    topMotor.set(0.7);
+    bottomMotor.set(0.7);
+  }
+
+
   public void shootSubwoofer(){
     topMotor.set(0.6);
     bottomMotor.set(0.6);
@@ -55,6 +71,16 @@ public class Shooter extends SubsystemBase {
   public void shootFeed(){
     topMotor.set(0.45);
     bottomMotor.set(0.45);
+  }
+
+  public void shootLaser(){
+    topMotor.set(0.80);
+    bottomMotor.set(0.80);  
+  }
+
+  public void shootLob(){
+    topMotor.set(0.30);
+    bottomMotor.set(0.30);  
   }
 
   public void shootAmp(){
@@ -85,12 +111,15 @@ public class Shooter extends SubsystemBase {
 
   public Command shooterPID(double setpoint) {
     ProfiledPIDController pivotController;
+    ArmFeedforward pivotFeedforward;
 
     pivotController = new ProfiledPIDController(
       ShooterConstants.PIVOT_P,
       ShooterConstants.PIVOT_I,
       ShooterConstants.PIVOT_D, 
-      new TrapezoidProfile.Constraints(200, 200));
+      new TrapezoidProfile.Constraints(600, 600));
+
+    pivotFeedforward = new ArmFeedforward(0, 0.03, 0);
 
     return new FunctionalCommand(
       () -> {
@@ -98,6 +127,9 @@ public class Shooter extends SubsystemBase {
       }, 
       () -> {
         pivotMotor.set(-pivotController.calculate(getPivotAngle(), setpoint));
+        if(pivotController.atGoal()){
+          pivotMotor.set(-pivotFeedforward.calculate(getPivotAngleRadians(), getPivotVelocity()));
+        }
       }, 
       (interrupted) -> {
 
@@ -106,6 +138,7 @@ public class Shooter extends SubsystemBase {
       this
       );
   }
+
 //TODO: CHECK U SLAVE
   public Command shooterRPM(double setpoint){
     ProfiledPIDController RPMController;
@@ -137,6 +170,13 @@ public class Shooter extends SubsystemBase {
     );
   }
 
+  public Command shooterWing(){
+    return new ParallelCommandGroup(
+      shooterPID(ShooterConstants.PIVOT_WING_ANGLE),
+      shootRPMWing()
+    );
+  }
+
   public Command shooterIdle(){
     return new ParallelCommandGroup(
       shooterPID(ShooterConstants.PIVOT_IDLE_ANGLE),
@@ -158,6 +198,27 @@ public class Shooter extends SubsystemBase {
     );
   }
 
+  public Command shooterLaser(){
+    return new ParallelCommandGroup(
+      shooterPID(ShooterConstants.PIVOT_IDLE_ANGLE),
+      shootRPMLaser()
+    );
+  }
+
+  public Command shooterLob(){
+    return new ParallelCommandGroup(
+      shooterPID(ShooterConstants.PIVOT_SUBWOOFER_ANGLE),
+      shootRPMLob()
+    );
+  }
+
+  public Command shooterPodium(){
+    return new ParallelCommandGroup(
+      shooterPID(ShooterConstants.PIVOT_PODIUM_ANGLE),
+      shootRPMSubwoofer()
+    );
+  }
+
   public Command shootRPMAmp(){
     return new InstantCommand(() -> shootAmp());
   }
@@ -168,6 +229,18 @@ public class Shooter extends SubsystemBase {
 
   public Command shootRPMSubwoofer(){
     return new InstantCommand(() -> shootSubwoofer());
+  }
+
+  public Command shootRPMLaser(){
+    return new InstantCommand(() -> shootLaser());
+  }
+
+  public Command shootRPMWing(){
+    return new InstantCommand(() -> shootWing());
+  }
+
+  public Command shootRPMLob(){
+    return new InstantCommand(() -> shootLob());
   }
 
   public Command reverseShoot(){

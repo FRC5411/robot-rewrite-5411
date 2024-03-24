@@ -132,14 +132,17 @@ public class RobotContainer {
     operator.b().whileFalse(shooter.shooterIdle());
 
     //TODO: Podium shot
-    // operator.a().whileTrue(shooter.shooter());
-    // operator.a().whileFalse(shooter.zeroShoot());
+    operator.a().whileTrue(shooter.shooterPodium());
+    operator.a().whileFalse(shooter.shooterIdle());
 
     operator.x().whileTrue(shooter.shooterAmp());
     operator.x().whileFalse(shooter.shooterIdle());
 
     operator.y().whileTrue(shooter.shooterFeed());
     operator.y().whileFalse(shooter.shooterIdle());
+
+    operator.povUp().whileTrue(shooter.shooterWing());
+    operator.povUp().whileFalse(shooter.shooterIdle());
 
     operator.rightBumper().whileTrue(smartFeed);
     operator.rightBumper().onFalse(indexerIntake.INTAKE(0));
@@ -152,6 +155,10 @@ public class RobotContainer {
 
     operator.leftTrigger().onTrue(indexerIntake.ampIntake());
     operator.leftTrigger().onFalse(indexerIntake.INTAKE(0));
+    operator.povLeft().whileTrue(shooter.shooterLaser());
+    operator.povLeft().onFalse(shooter.shooterIdle());
+    operator.povRight().whileTrue(shooter.shooterLob());
+    operator.povRight().onFalse(shooter.shooterIdle());
 
     pilotController.leftTrigger().onTrue(indexerIntake.smartFeedCommand());
     pilotController.leftTrigger().onFalse(indexerIntake.INTAKE(0));

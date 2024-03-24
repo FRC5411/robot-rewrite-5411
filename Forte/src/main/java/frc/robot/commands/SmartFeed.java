@@ -14,17 +14,14 @@ public class SmartFeed extends Command {
   /** Creates a new SmartFeed. */
   private IndexerIntake indexerIntake;
 
-  private static DigitalInput intakeSensor;
   private static DigitalInput indexerSensor;
 
   private boolean indexerHasNote;
-  private boolean intakeHasNote;
 
 
   public SmartFeed(IndexerIntake indexerIntake) {
     this.indexerIntake = indexerIntake;
 
-    intakeSensor = new DigitalInput(IndexerIntakeConstants.INTAKE_SENSOR_ID);
     indexerSensor = new DigitalInput(IndexerIntakeConstants.INDEXER_SENSOR_ID);
     // Use addRequirements() here to declare subsystem dependencies.
 
@@ -35,9 +32,7 @@ public class SmartFeed extends Command {
     return indexerSensor.get();
   }
 
-  public static boolean IntakeSensorHasNote(){
-    return intakeSensor.get();
-  }
+
 
   // Called when the command is initially scheduled.
   @Override
@@ -48,13 +43,8 @@ public class SmartFeed extends Command {
   public void execute() {
 
     indexerHasNote = IndexerSensorHasNote();
-    intakeHasNote = IntakeSensorHasNote();
 
-    if(!indexerSensor.get() && !intakeSensor.get()){
-      indexerIntake.setIntakeSpeed(0.5);
-      indexerIntake.setIndexerSpeed(0.25);
-    }
-    else if(!indexerSensor.get() && intakeSensor.get()){
+    if(!indexerSensor.get() ){
       indexerIntake.setIntakeSpeed(0.1);
       indexerIntake.setIndexerSpeed(0);
     } else{

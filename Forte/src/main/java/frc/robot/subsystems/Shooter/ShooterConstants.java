@@ -20,11 +20,14 @@ public class ShooterConstants {
 
     public static final Double ROLLER_P = 10d;
     public static final Double ROLLER_I = 0d;
+    
     public static final Double ROLLER_D = 0.001d;
 
     public static final Double PIVOT_SUBWOOFER_ANGLE = 52.0;
     public static final Double PIVOT_AMP_ANGLE = 48.0;
     public static final Double PIVOT_IDLE_ANGLE = 6.0;
-    public static final Double PIVOT_WING_ANGLE = 0.0;
+    public static final Double PIVOT_WING_ANGLE = 25.5
+    ;
+    public static final Double PIVOT_PODIUM_ANGLE = 35.0;
 
 }
