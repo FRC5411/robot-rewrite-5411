@@ -59,7 +59,7 @@ public class Shooter extends SubsystemBase {
 
   public void shootAmp(){
     topMotor.set(0);
-    bottomMotor.set(0.18);
+    bottomMotor.set(0.21);
   }
   
   public void motorZero(){

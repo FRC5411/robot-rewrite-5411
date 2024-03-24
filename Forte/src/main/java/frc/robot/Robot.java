@@ -4,8 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.SmartFeed;
 
 import org.littletonrobotics.junction.LoggedRobot;
 
@@ -19,6 +25,15 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private static AddressableLED m_led;
+  private static AddressableLEDBuffer m_ledBuffer;
+  private double lastChange;
+  private boolean on = true;
+  private Color m_EyeColor = Color.kPurple;
+	private Color m_BackgroundColor = Color.kGreen;
+	private int m_Length;
+	private int m_eyePosition = 0;
+	private int m_scanDirection = 1;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -29,6 +44,80 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    // PWM port 0
+    // Must be a PWM header, not MXP or DIO
+    m_led = new AddressableLED(0);
+
+    // Reuse buffer
+    // Default to a length of 60, start empty output
+    // Length is expensive to set, so only set it once, then just update data
+    m_ledBuffer = new AddressableLEDBuffer(26);
+    m_led.setLength(m_ledBuffer.getLength());
+
+    // Set the data
+    m_led.setData(m_ledBuffer);
+    m_led.start();
+
+    
+   
+   m_led.setData(m_ledBuffer);
+  }
+
+  public void green(){
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+      // Sets the specified LED to the RGB values for red
+      m_ledBuffer.setRGB(i, 0, 255, 0);
+
+   }
+  }
+
+  public void white(){
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+      // Sets the specified LED to the RGB values for red
+      m_ledBuffer.setRGB(i, 255, 0, 255);
+
+   }
+  }
+
+  public void blinking(){
+    double timestamp = Timer.getFPGATimestamp();
+    if (timestamp- lastChange > 0.1){
+      on = !on;
+      lastChange = timestamp;
+    }
+    if (on){
+      green();
+    } else {
+      white();
+    }
+  }
+
+  public void scanner(){
+    int bufferLength = m_ledBuffer.getLength();
+		double intensity;
+		double red;
+		double green;
+		double blue;
+		double distanceFromEye;
+
+		for (int index = 0; index < bufferLength; index++) {
+			distanceFromEye = MathUtil.clamp( Math.abs(m_eyePosition - index),0,2);
+			intensity = 1 - distanceFromEye/2;
+			red = MathUtil.interpolate(m_BackgroundColor.red, m_EyeColor.red, intensity);
+			green = MathUtil.interpolate(m_BackgroundColor.green, m_EyeColor.green, intensity);
+			blue = MathUtil.interpolate(m_BackgroundColor.blue, m_EyeColor.blue, intensity);
+
+			m_ledBuffer.setLED(index, new Color(red, green, blue));
+		}
+
+		if (m_eyePosition == 0) {
+			m_scanDirection = 1;
+		} else if (m_eyePosition == bufferLength - 1) {
+			m_scanDirection = -1;
+		}
+
+		m_eyePosition += m_scanDirection;
   }
 
   /**
@@ -45,6 +134,13 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    if(!SmartFeed.IndexerSensorHasNote()){
+      blinking();
+    } else {
+     scanner();
+    }
+    m_led.setData(m_ledBuffer);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

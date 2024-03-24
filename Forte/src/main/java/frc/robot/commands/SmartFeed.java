@@ -1,0 +1,75 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.IndexerIntake.IndexerIntake;
+import frc.robot.subsystems.IndexerIntake.IndexerIntakeConstants;
+
+public class SmartFeed extends Command {
+  /** Creates a new SmartFeed. */
+  private IndexerIntake indexerIntake;
+
+  private static DigitalInput intakeSensor;
+  private static DigitalInput indexerSensor;
+
+  private boolean indexerHasNote;
+  private boolean intakeHasNote;
+
+
+  public SmartFeed(IndexerIntake indexerIntake) {
+    this.indexerIntake = indexerIntake;
+
+    intakeSensor = new DigitalInput(IndexerIntakeConstants.INTAKE_SENSOR_ID);
+    indexerSensor = new DigitalInput(IndexerIntakeConstants.INDEXER_SENSOR_ID);
+    // Use addRequirements() here to declare subsystem dependencies.
+
+    addRequirements(indexerIntake);
+  }
+
+  public static boolean IndexerSensorHasNote(){
+    return indexerSensor.get();
+  }
+
+  public static boolean IntakeSensorHasNote(){
+    return intakeSensor.get();
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+
+    indexerHasNote = IndexerSensorHasNote();
+    intakeHasNote = IntakeSensorHasNote();
+
+    if(!indexerSensor.get() && !intakeSensor.get()){
+      indexerIntake.setIntakeSpeed(0.5);
+      indexerIntake.setIndexerSpeed(0.25);
+    }
+    else if(!indexerSensor.get() && intakeSensor.get()){
+      indexerIntake.setIntakeSpeed(0.1);
+      indexerIntake.setIndexerSpeed(0);
+    } else{
+      indexerIntake.setIntakeSpeed(1.0);
+      indexerIntake.setIndexerSpeed(0.25);
+    }
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
+}

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import frc.robot.commands.DriverIntakeFeedback;
+import frc.robot.commands.SmartFeed;
 import frc.robot.commands.SwerveCommands;
 import frc.robot.subsystems.Drive.Drive;
 import frc.robot.subsystems.Drive.GyroIO;
@@ -36,6 +37,8 @@ public class RobotContainer {
 
   private CommandXboxController pilotController = new CommandXboxController(0);
   private CommandXboxController operator = new CommandXboxController(1);
+
+  private SmartFeed smartFeed;
 
   
 
@@ -68,6 +71,7 @@ public class RobotContainer {
 
         indexerIntake = 
             new IndexerIntake();
+        smartFeed = new SmartFeed(indexerIntake);
 
     
 
@@ -136,7 +140,7 @@ public class RobotContainer {
     operator.y().whileTrue(shooter.shooterFeed());
     operator.y().whileFalse(shooter.shooterIdle());
 
-    operator.rightBumper().onTrue(indexerIntake.INTAKE(1));
+    operator.rightBumper().whileTrue(smartFeed);
     operator.rightBumper().onFalse(indexerIntake.INTAKE(0));
 
     operator.leftBumper().onTrue(indexerIntake.INTAKE(-1));
@@ -148,6 +152,8 @@ public class RobotContainer {
     operator.leftTrigger().onTrue(indexerIntake.ampIntake());
     operator.leftTrigger().onFalse(indexerIntake.INTAKE(0));
 
+    pilotController.leftTrigger().onTrue(indexerIntake.smartFeedCommand());
+    pilotController.leftTrigger().onFalse(indexerIntake.INTAKE(0));
     pilotController.a().onTrue(robotDrive.gyroReset());
 
     pilotController.x().onTrue(

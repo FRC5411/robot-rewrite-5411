@@ -21,8 +21,10 @@ public class IndexerIntake extends SubsystemBase {
   /** Creates a new Feeder. */
   private CANSparkMax intakeMotor;
   private CANSparkMax indexerMotor;
-  private DigitalInput intakeSensor;
-  private DigitalInput indexerSensor;
+  // private DigitalInput intakeSensor;
+  // private DigitalInput indexerSensor;
+  private boolean indexerHasNote;
+  private boolean intakeHasNote;
 
   public IndexerIntake() {
     intakeMotor = new CANSparkMax(IndexerIntakeConstants.INTAKE_ID, MotorType.kBrushless);
@@ -30,6 +32,9 @@ public class IndexerIntake extends SubsystemBase {
 
     // intakeSensor = new DigitalInput(IndexerIntakeConstants.INTAKE_SENSOR_ID);
     // indexerSensor = new DigitalInput(IndexerIntakeConstants.INDEXER_SENSOR_ID);
+
+    indexerHasNote = false;
+    intakeHasNote = false;
 
     config();
   }
@@ -59,28 +64,14 @@ public class IndexerIntake extends SubsystemBase {
     indexerMotor.set(speed);
   }
 
-  //TODO: Check with Armaan
-  // public void smartFeed(){
-  //   if(indexerSensor.get() && intakeSensor.get()){
-  //     setIntakeSpeed(0.5);
-  //     setIndexerSpeed(0.25);
-  //   }
-  //   else if(indexerSensor.get() && !intakeSensor.get()){
-  //     setIntakeSpeed(0.1);
-  //     setIndexerSpeed(0);
-  //   } else{
-  //     setIntakeSpeed(1.0);
-  //     setIndexerSpeed(0.25);
-  //   }
-  // }
+ // TODO: Check with Armaan
+  public void smartFeed(){
+    
 
-  // public boolean IndexerSensorHasNote(){
-  //   return indexerSensor.get();
-  // }
+    
+  }
 
-  // public boolean IntakeSensorHasNote(){
-  //   return intakeSensor.get();
-  // }
+ 
 
   public void intakeFeedback(Joystick driver, Joystick operator){
     driver.setRumble(RumbleType.kBothRumble, 0.5);
@@ -102,7 +93,7 @@ public class IndexerIntake extends SubsystemBase {
   }
 
   public void ampScore(){
-    setIndexerSpeed(0.2);
+    setIndexerSpeed(0.35);
   }
 
   public double currentIndexerAmp(){
@@ -128,6 +119,10 @@ public class IndexerIntake extends SubsystemBase {
     return new InstantCommand(() -> setIndexerSpeed(demand));
   }
 
+  public Command smartFeedCommand(){
+    return new InstantCommand(()-> smartFeed());
+  }
+
   public Command stopIntaker(){
     return new InstantCommand(() -> stopFeed());
   }
@@ -142,6 +137,7 @@ public class IndexerIntake extends SubsystemBase {
   
   @Override
    public void periodic() {
+    
 
 
     // SmartDashboard.putBoolean("Intake Sensor Note Present", IntakeSensorHasNote());
