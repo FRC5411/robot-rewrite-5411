@@ -22,7 +22,7 @@ public class DriverIntakeFeedback extends Command{
 
     @Override
     public void execute() {
-        // if (intake.IndexerSensorHasNote() || intake.IntakeSensorHasNote()) {
+        // if () {
         //     driver.getHID().setRumble(RumbleType.kBothRumble, 1);
         //     operator.getHID().setRumble(RumbleType.kBothRumble, 1);
         // } else {

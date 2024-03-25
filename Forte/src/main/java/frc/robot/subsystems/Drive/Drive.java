@@ -115,7 +115,7 @@ public class Drive extends SubsystemBase {
     AutoBuilder.configureHolonomic(
         () -> odometry.getPoseMeters(),
         this::setPose,
-        () -> KINEMATICS.toChassisSpeeds(getModuleStates()),
+        this::getRobotRelativeSpeeds,
         this::runSwerve,
         new HolonomicPathFollowerConfig(
             translationPathplannerConstants,
@@ -274,6 +274,15 @@ public class Drive extends SubsystemBase {
     currentPose = poseEstimator.getEstimatedPosition();
   }
 
+  public ChassisSpeeds getFieldRelativeSpeeds() {
+    return ChassisSpeeds.fromFieldRelativeSpeeds(Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates()),
+        getRotation());
+  }
+
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
+}
+
   /** Add a vision measurement for the poseEstimator */
   public void addVisionMeasurement(
       Pose2d visionMeasurement, double timestampS, Matrix<N3, N1> stdDevs) {
@@ -352,6 +361,7 @@ public class Drive extends SubsystemBase {
   public ChassisSpeeds getDesiredChassisSpeeds() {
     return desiredChassisSpeeds;
   }
+
 
   /** Returns the positions of the modules on the drive */
   public Translation2d[] getModuleTranslations() {
