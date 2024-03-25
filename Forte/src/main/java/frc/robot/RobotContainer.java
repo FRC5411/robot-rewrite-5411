@@ -13,9 +13,14 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.DriverIntakeFeedback;
 import frc.robot.commands.SmartFeed;
@@ -34,17 +39,20 @@ public class RobotContainer {
   private Drive robotDrive;
   private IndexerIntake indexerIntake;
   private Shooter shooter;
+  public static Boolean isField = true;
 
   private CommandXboxController pilotController = new CommandXboxController(0);
   private CommandXboxController operator = new CommandXboxController(1);
 
+  private LoggedDashboardChooser<Command> AutonChooser;
+
   private SmartFeed smartFeed;
 
-  
-
-  private LoggedDashboardChooser<Command> autoChooser;
 
   public RobotContainer() {
+
+    
+
     initializeSubsystems();
 
     configureAutonomous();
@@ -55,6 +63,14 @@ public class RobotContainer {
 
     // Use assisted control by default
     configureButtonBindings();
+
+    try {
+      AutonChooser =
+          new LoggedDashboardChooser<>("Autonomous Selector", AutoBuilder.buildAutoChooser());
+    } catch (Exception e) {
+      AutonChooser = new LoggedDashboardChooser<>("Autonomous Selector");
+      AutonChooser.addDefaultOption("New Auto", shooter.shooterPodium());
+    }
   }
 
   /** Instantiate subsystems */
@@ -67,7 +83,7 @@ public class RobotContainer {
                 new ModuleIOSparkMax(1),
                 new ModuleIOSparkMax(2),
                 new ModuleIOSparkMax(3),
-                new GyroIOPigeon2(false));
+                new GyroIOPigeon2());
 
         indexerIntake = 
             new IndexerIntake();
@@ -111,7 +127,24 @@ public class RobotContainer {
       }
 
   /** Register commands with PathPlanner and add default autos to chooser */
-  private void configureAutonomous() {}
+  private void configureAutonomous() {
+    NamedCommands.registerCommand("Shoot at Podium", shooter.shooterPodium());
+
+    NamedCommands.registerCommand("Shoot at Amp", shooter.shooterAmp());
+    
+    NamedCommands.registerCommand("Shoot at Wing", shooter.shooterWing());
+
+    NamedCommands.registerCommand("Shoot at subwoofer", shooter.shooterSubwoofer());
+
+    NamedCommands.registerCommand("Shoot at idle", shooter.shooterIdle());
+
+    NamedCommands.registerCommand("Forward Note Shoot", indexerIntake.INTAKE(1));
+
+    NamedCommands.registerCommand("Forward Note Amp", indexerIntake.ampIntake());
+
+    NamedCommands.registerCommand("Intake Note", indexerIntake.smartFeedCommand());
+  }
+
 
   private void configureTriggers() {
     // For LEDS
@@ -119,19 +152,22 @@ public class RobotContainer {
 
   /** Configure controllers */
   private void configureButtonBindings() {
-      /* Drive with joysticks */
-      robotDrive.setDefaultCommand(
-          SwerveCommands.swerveDrive(
+
+    /* Drive with joysticks */
+    robotDrive.setDefaultCommand(SwerveCommands.swerveDrive(
               robotDrive,
               () -> -pilotController.getLeftY(),
               () -> -pilotController.getLeftX(),
               () -> pilotController.getRightX(),
-              () -> pilotController.x().getAsBoolean()));
+              isField));
 
+    pilotController.a().toggleOnTrue(new InstantCommand(() -> isField  = !isField));
+    pilotController.a().toggleOnFalse(new InstantCommand(() -> isField = isField));
+
+    
     operator.b().whileTrue(shooter.shooterSubwoofer());
     operator.b().whileFalse(shooter.shooterIdle());
 
-    //TODO: Podium shot
     operator.a().whileTrue(shooter.shooterPodium());
     operator.a().whileFalse(shooter.shooterIdle());
 
@@ -162,11 +198,11 @@ public class RobotContainer {
 
     pilotController.leftTrigger().onTrue(indexerIntake.smartFeedCommand());
     pilotController.leftTrigger().onFalse(indexerIntake.INTAKE(0));
-    pilotController.a().onTrue(robotDrive.gyroReset());
+    pilotController.x().onTrue(robotDrive.gyroReset());
   }
 
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return AutonChooser.get();
   }
 
   public void reset() {

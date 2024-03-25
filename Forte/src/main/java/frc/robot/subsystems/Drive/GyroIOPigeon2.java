@@ -17,15 +17,15 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 
 /** Class to interact with the physical gyroscope */
 public class GyroIOPigeon2 implements GyroIO {
-  private Pigeon2 gyro = new Pigeon2(10);
+  public Pigeon2 gyro = new Pigeon2(10, "drivetrain");
 
   private StatusSignal<Double> yaw = gyro.getYaw();
   private StatusSignal<Double> yawVelocity = gyro.getAngularVelocityZWorld();
 
   /** Create a new hardware implementation of the gyroscope */
-  public GyroIOPigeon2(boolean phoenixDrive) {
+  public GyroIOPigeon2() {
     gyro.getConfigurator().apply(new Pigeon2Configuration());
-    gyro.getConfigurator().setYaw(0.0);
+    //gyro.getConfigurator().setYaw(0.0);
 
     yaw.setUpdateFrequency(100.0);
     yawVelocity.setUpdateFrequency(50.0);

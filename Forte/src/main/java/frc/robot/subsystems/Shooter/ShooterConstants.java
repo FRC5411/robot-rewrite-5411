@@ -27,7 +27,7 @@ public class ShooterConstants {
     public static final Double PIVOT_AMP_ANGLE = 48.0;
     public static final Double PIVOT_IDLE_ANGLE = 6.0;
     public static final Double PIVOT_WING_ANGLE = 25.5
-    ;
+     ;
     public static final Double PIVOT_PODIUM_ANGLE = 35.0;
 
 }

@@ -13,13 +13,13 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 
 import org.littletonrobotics.junction.Logger;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -42,7 +42,7 @@ public class SwerveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier thetaSupplier,
-      BooleanSupplier feildSupplier) {
+      Boolean field) {
     return Commands.run(
         () -> {
           // Forward, backward
@@ -55,8 +55,6 @@ public class SwerveCommands {
           // Rotation
           double theta = MathUtil.applyDeadband(thetaSupplier.getAsDouble(), DEADBAND);
 
-          IS_FIELD = feildSupplier.getAsBoolean();
-
           // Square inputs
           linearMagnitude *= linearMagnitude;
           theta = Math.copySign(theta * theta, theta);
@@ -66,6 +64,10 @@ public class SwerveCommands {
               new Pose2d(new Translation2d(), linearDirection)
                   .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
                   .getTranslation();
+
+          IS_FIELD = field;
+
+          SmartDashboard.putBoolean("Field ", IS_FIELD);
 
           if (IS_FIELD) {
             robotDrive.runSwerve(

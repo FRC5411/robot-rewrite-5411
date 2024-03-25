@@ -39,6 +39,7 @@ import org.littletonrobotics.junction.Logger;
 
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.commands.SmartFeed;
 
 /** Swerve drive */
 public class Drive extends SubsystemBase {
@@ -66,10 +67,11 @@ public class Drive extends SubsystemBase {
   //           new SwerveModuleState()
   //         });
   // private SwerveSetpointGenerator setpointGenerator =
-  //     new SwerveSetpointGenerator(KINEMATICS, MODULE_TRANSLATIONS);
+  //     new SwerveSetpointGenerator(KINEMATICS);
   private boolean areModulesOrienting = false;
 
   private GyroIO gyroIO;
+  private static GyroIOPigeon2 gyro = new GyroIOPigeon2();
   private GyroIOInputsAutoLogged gyroIOInputs = new GyroIOInputsAutoLogged();
 
   private Module[] modules = new Module[4]; // FL FR BL BR
@@ -129,13 +131,13 @@ public class Drive extends SubsystemBase {
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
           Logger.recordOutput(
-              "Drive/Odometry/Trajectory",
+              "Active Path",
               activePath.toArray(new Pose2d[activePath.size()])); // Autolog the trajectory
         });
     PathPlannerLogging.setLogTargetPoseCallback(
         (targetPose) -> {
           Logger.recordOutput(
-              "Drive/Odometry/TrajectorySetpoint", targetPose); // Auto log the target setpoint
+              "Target setpoint", targetPose); // Auto log the target setpoint
         });
 
     SmartDashboard.putData(field);
@@ -147,6 +149,7 @@ public class Drive extends SubsystemBase {
     // Logger.recordOutput("FrontRight Module", modules[1].getAbsoluteAngle());
     // Logger.recordOutput("BackLeft Module", modules[2].getAbsoluteAngle());
     // Logger.recordOutput("BackRight Module", modules[3].getAbsoluteAngle());
+    SmartDashboard.putNumber("Yaw", getRotation().getDegrees());
 
     gyroIO.updateInputs(gyroIOInputs);
     for (var module : modules) {

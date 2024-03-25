@@ -64,8 +64,8 @@ public class Shooter extends SubsystemBase {
 
 
   public void shootSubwoofer(){
-    topMotor.set(0.6);
-    bottomMotor.set(0.6);
+    topMotor.set(0.50);
+    bottomMotor.set(0.50);
   }
 
   public void shootFeed(){
@@ -74,7 +74,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shootLaser(){
-    topMotor.set(0.80);
+    topMotor.set(0.80); 
     bottomMotor.set(0.80);  
   }
 

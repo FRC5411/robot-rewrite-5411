@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerIntake.IndexerIntake;
 import frc.robot.subsystems.IndexerIntake.IndexerIntakeConstants;
