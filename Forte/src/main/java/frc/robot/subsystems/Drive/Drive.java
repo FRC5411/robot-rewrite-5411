@@ -112,7 +112,7 @@ public class Drive extends SubsystemBase {
 
     // Configure PathPlanner
     AutoBuilder.configureHolonomic(
-        () -> odometry.getPoseMeters(),
+        odometry::getPoseMeters,
         this::setPose,
         this::getRobotRelativeSpeeds,
         this::runSwerve,
