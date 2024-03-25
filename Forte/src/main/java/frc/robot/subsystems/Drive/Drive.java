@@ -150,7 +150,7 @@ public class Drive extends SubsystemBase {
     // Logger.recordOutput("BackLeft Module", modules[2].getAbsoluteAngle());
     // Logger.recordOutput("BackRight Module", modules[3].getAbsoluteAngle());
     SmartDashboard.putNumber("Yaw", getRotation().getDegrees());
-
+    SmartDashboard.putData(field);
     gyroIO.updateInputs(gyroIOInputs);
     for (var module : modules) {
       module.updateInputs();
@@ -195,7 +195,7 @@ public class Drive extends SubsystemBase {
     }
 
     currentPose = poseEstimator.getEstimatedPosition();
-
+    
     filteredPose =
         new Pose2d(
             xFilter.calculate(getPoseEstimate().getX()),

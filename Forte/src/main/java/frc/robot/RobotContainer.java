@@ -6,17 +6,12 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -24,7 +19,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import frc.robot.commands.DriverIntakeFeedback;
 import frc.robot.commands.SmartFeed;
 import frc.robot.commands.SwerveCommands;
 import frc.robot.subsystems.Drive.Drive;
@@ -35,7 +29,6 @@ import frc.robot.subsystems.Drive.ModuleIOSim;
 import frc.robot.subsystems.Drive.ModuleIOSparkMax;
 import frc.robot.subsystems.IndexerIntake.IndexerIntake;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Shooter.ShooterConstants;
 
 public class RobotContainer {
   private Drive robotDrive;
@@ -46,8 +39,6 @@ public class RobotContainer {
   private CommandXboxController pilotController = new CommandXboxController(0);
   private CommandXboxController operator = new CommandXboxController(1);
 
-  private LoggedDashboardChooser<Command> AutonChooser;
-
   private SmartFeed smartFeed;
 
   private SendableChooser<Command> autoChooser;
@@ -56,25 +47,24 @@ public class RobotContainer {
   
   public RobotContainer() {
 
-    
-
     initializeSubsystems();
 
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("autoChooser", autoChooser);
+    configureAutonomous();
 
+    try {
+      autoChooser = AutoBuilder.buildAutoChooser();
+    } catch (Exception e) {
+      autoChooser = new SendableChooser<Command>();
+      autoChooser.setDefaultOption("New Auto", shooter.shooterPodium());
+    }
+
+
+    SmartDashboard.putData("autoChooser", autoChooser);
     configureTriggers();
 
     // Use assisted control by default
     configureButtonBindings();
 
-    try {
-      AutonChooser =
-          new LoggedDashboardChooser<>("Autonomous Selector", AutoBuilder.buildAutoChooser());
-    } catch (Exception e) {
-      AutonChooser = new LoggedDashboardChooser<>("Autonomous Selector");
-      AutonChooser.addDefaultOption("New Auto", shooter.shooterPodium());
-    }
   }
 
   /** Instantiate subsystems */
@@ -91,12 +81,15 @@ public class RobotContainer {
 
         indexerIntake = 
             new IndexerIntake();
-        smartFeed = new SmartFeed(indexerIntake);
 
-    
+        smartFeed = 
+        new SmartFeed(indexerIntake);
 
-        shooter = new Shooter();
+        shooter = 
+        new Shooter();
+
         break;
+
       case SIM:
         robotDrive =
             new Drive(
@@ -106,6 +99,7 @@ public class RobotContainer {
                 new ModuleIOSim(3),
                 new GyroIO() {});
         break;
+
       default:
         robotDrive =
             new Drive(
@@ -164,10 +158,7 @@ public class RobotContainer {
               () -> -pilotController.getLeftX(),
               () -> pilotController.getRightX(),
               isField));
-
-    pilotController.a().toggleOnTrue(new InstantCommand(() -> isField  = !isField));
-    pilotController.a().toggleOnFalse(new InstantCommand(() -> isField = isField));
-
+    pilotController.x().onTrue(new InstantCommand(() -> robotDrive.resetGyro()));
     
     operator.b().whileTrue(shooter.shooterSubwoofer());
     operator.b().whileFalse(shooter.shooterIdle());
@@ -185,24 +176,20 @@ public class RobotContainer {
     operator.povUp().whileFalse(shooter.shooterIdle());
 
     operator.rightBumper().whileTrue(smartFeed);
-    operator.rightBumper().onFalse(indexerIntake.INTAKE(0));
+    operator.rightBumper().onFalse(indexerIntake.INTAKE((0)));
 
     operator.leftBumper().onTrue(indexerIntake.INTAKE(-1));
-    operator.leftBumper().onFalse(indexerIntake.INTAKE(0));
+    operator.leftBumper().onFalse(indexerIntake.INTAKE((0)));
 
-    operator.rightTrigger().onTrue(indexerIntake.INTAKE(1));
-    operator.rightTrigger().onFalse(indexerIntake.INTAKE(0));
+    operator.rightTrigger().onTrue(indexerIntake.INTAKE((1)));
+    operator.rightTrigger().onFalse(indexerIntake.INTAKE((0)));
 
     operator.leftTrigger().onTrue(indexerIntake.ampIntake());
-    operator.leftTrigger().onFalse(indexerIntake.INTAKE(0));
+    operator.leftTrigger().onFalse(indexerIntake.INTAKE((0)));
     operator.povLeft().whileTrue(shooter.shooterLaser());
     operator.povLeft().onFalse(shooter.shooterIdle());
     operator.povRight().whileTrue(shooter.shooterLob());
     operator.povRight().onFalse(shooter.shooterIdle());
-
-    pilotController.leftTrigger().onTrue(SmartFeed(indexerIntake, pilotController, operator));
-    pilotController.leftTrigger().onFalse(indexerIntake.INTAKE(0));
-    pilotController.x().onTrue(robotDrive.gyroReset());
   }
 
   public Command getAutonomousCommand() {
