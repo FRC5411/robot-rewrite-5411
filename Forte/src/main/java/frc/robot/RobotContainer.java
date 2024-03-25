@@ -50,7 +50,7 @@ public class RobotContainer {
 
   private SmartFeed smartFeed;
 
-      private SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoChooser;
 
 
   
@@ -200,7 +200,7 @@ public class RobotContainer {
     operator.povRight().whileTrue(shooter.shooterLob());
     operator.povRight().onFalse(shooter.shooterIdle());
 
-    pilotController.leftTrigger().onTrue(indexerIntake.smartFeedCommand());
+    pilotController.leftTrigger().onTrue(SmartFeed(indexerIntake, pilotController, operator));
     pilotController.leftTrigger().onFalse(indexerIntake.INTAKE(0));
     pilotController.x().onTrue(robotDrive.gyroReset());
   }
