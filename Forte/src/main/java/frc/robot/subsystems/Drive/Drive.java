@@ -39,12 +39,11 @@ import org.littletonrobotics.junction.Logger;
 
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.commands.SmartFeed;
 
 /** Swerve drive */
 public class Drive extends SubsystemBase {
-  public static final double TRACK_WIDTH_X_M = Units.inchesToMeters(29.5);
-  public static final double TRACK_WIDTH_Y_M = Units.inchesToMeters(29.5);
+  public static final double TRACK_WIDTH_X_M = Units.inchesToMeters(24.5);
+  public static final double TRACK_WIDTH_Y_M = Units.inchesToMeters(24.5);
   public static final double DRIVEBASE_RADIUS_M =
       Math.hypot(TRACK_WIDTH_X_M / 2.0, TRACK_WIDTH_Y_M / 2.0);
   public static final double MAX_LINEAR_SPEED_MPS = Units.feetToMeters(19.1);

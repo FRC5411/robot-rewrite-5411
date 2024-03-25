@@ -1,5 +1,6 @@
 package frc.robot.lib.Interpolation;
 
+
 public interface Interpolable<T> {
 
   /**

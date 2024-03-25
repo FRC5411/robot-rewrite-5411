@@ -6,25 +6,19 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import frc.robot.commands.DriverIntakeFeedback;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import frc.robot.commands.SmartFeed;
 import frc.robot.commands.SwerveCommands;
 import frc.robot.subsystems.Drive.Drive;
@@ -35,7 +29,6 @@ import frc.robot.subsystems.Drive.ModuleIOSim;
 import frc.robot.subsystems.Drive.ModuleIOSparkMax;
 import frc.robot.subsystems.IndexerIntake.IndexerIntake;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Shooter.ShooterConstants;
 
 public class RobotContainer {
   private Drive robotDrive;
@@ -200,7 +193,7 @@ public class RobotContainer {
     operator.povRight().whileTrue(shooter.shooterLob());
     operator.povRight().onFalse(shooter.shooterIdle());
 
-    pilotController.leftTrigger().onTrue(SmartFeed(indexerIntake, pilotController, operator));
+    pilotController.leftTrigger().onTrue(smartFeed);
     pilotController.leftTrigger().onFalse(indexerIntake.INTAKE(0));
     pilotController.x().onTrue(robotDrive.gyroReset());
   }
