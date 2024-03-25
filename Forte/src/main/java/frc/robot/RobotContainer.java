@@ -14,11 +14,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import frc.robot.commands.SmartFeed;
 import frc.robot.commands.SwerveCommands;
 import frc.robot.subsystems.Drive.Drive;
@@ -190,6 +189,10 @@ public class RobotContainer {
     operator.povLeft().onFalse(shooter.shooterIdle());
     operator.povRight().whileTrue(shooter.shooterLob());
     operator.povRight().onFalse(shooter.shooterIdle());
+
+    pilotController.leftTrigger().onTrue(smartFeed);
+    pilotController.leftTrigger().onFalse(indexerIntake.INTAKE(0));
+    pilotController.x().onTrue(robotDrive.gyroReset());
   }
 
   public Command getAutonomousCommand() {

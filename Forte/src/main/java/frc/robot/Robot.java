@@ -11,9 +11,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.SmartFeed;
 
 import org.littletonrobotics.junction.LoggedRobot;
+
+import frc.robot.commands.SmartFeed;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -30,10 +31,10 @@ public class Robot extends LoggedRobot {
   private double lastChange;
   private boolean on = true;
   private Color m_EyeColor = Color.kPurple;
-	private Color m_BackgroundColor = Color.kGreen;
-	private int m_Length;
-	private int m_eyePosition = 0;
-	private int m_scanDirection = 1;
+  private Color m_BackgroundColor = Color.kGreen;
+  private int m_Length;
+  private int m_eyePosition = 0;
+  private int m_scanDirection = 1;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -95,29 +96,29 @@ public class Robot extends LoggedRobot {
 
   public void scanner(){
     int bufferLength = m_ledBuffer.getLength();
-		double intensity;
-		double red;
-		double green;
-		double blue;
-		double distanceFromEye;
+    double intensity;
+    double red;
+    double green;
+    double blue;
+    double distanceFromEye;
 
-		for (int index = 0; index < bufferLength; index++) {
-			distanceFromEye = MathUtil.clamp( Math.abs(m_eyePosition - index),0,2);
-			intensity = 1 - distanceFromEye/2;
-			red = MathUtil.interpolate(m_BackgroundColor.red, m_EyeColor.red, intensity);
-			green = MathUtil.interpolate(m_BackgroundColor.green, m_EyeColor.green, intensity);
-			blue = MathUtil.interpolate(m_BackgroundColor.blue, m_EyeColor.blue, intensity);
+    for (int index = 0; index < bufferLength; index++) {
+      distanceFromEye = MathUtil.clamp( Math.abs(m_eyePosition - index),0,2);
+      intensity = 1 - distanceFromEye/2;
+      red = MathUtil.interpolate(m_BackgroundColor.red, m_EyeColor.red, intensity);
+      green = MathUtil.interpolate(m_BackgroundColor.green, m_EyeColor.green, intensity);
+      blue = MathUtil.interpolate(m_BackgroundColor.blue, m_EyeColor.blue, intensity);
 
-			m_ledBuffer.setLED(index, new Color(red, green, blue));
-		}
+      m_ledBuffer.setLED(index, new Color(red, green, blue));
+    }
 
-		if (m_eyePosition == 0) {
-			m_scanDirection = 1;
-		} else if (m_eyePosition == bufferLength - 1) {
-			m_scanDirection = -1;
-		}
+    if (m_eyePosition == 0) {
+      m_scanDirection = 1;
+    } else if (m_eyePosition == bufferLength - 1) {
+      m_scanDirection = -1;
+    }
 
-		m_eyePosition += m_scanDirection;
+    m_eyePosition += m_scanDirection;
   }
 
   /**
