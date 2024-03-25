@@ -30,7 +30,6 @@ public class Shooter extends SubsystemBase {
   private DutyCycleEncoder pivotEncoder;
   private TalonFX topMotor;
   private TalonFX bottomMotor;
-  private double pivotGearRatio;
   
   public Shooter() {
     pivotMotor = new CANSparkMax(ShooterConstants.PIVOT_PORT, MotorType.kBrushless);
@@ -38,7 +37,6 @@ public class Shooter extends SubsystemBase {
     bottomMotor = new TalonFX(ShooterConstants.LOWER_ROLLER_PORT, "drivetrain");
     pivotEncoder = new DutyCycleEncoder(ShooterConstants.PIVOT_ENCODER_PORT);
 
-    pivotGearRatio =  1.0 / 144.0;
     config();
   }
 
