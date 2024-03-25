@@ -10,12 +10,16 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import frc.robot.commands.DriverIntakeFeedback;
 import frc.robot.commands.SmartFeed;
@@ -40,17 +44,16 @@ public class RobotContainer {
 
   private SmartFeed smartFeed;
 
+      private SendableChooser<Command> autoChooser;
+
+
   
-
-  private LoggedDashboardChooser<Command> autoChooser;
-
   public RobotContainer() {
     initializeSubsystems();
 
-    configureAutonomous();
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("autoChooser", autoChooser);
 
-    // AutoBuilder is configured when Drive is initialized, thus chooser must be instantiated after
-    // initializeSubsystems()
     configureTriggers();
 
     // Use assisted control by default
@@ -166,8 +169,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return autoChooser.get();
-  }
+        // An ExampleCommand will run in autonomous
+        return autoChooser.getSelected();
+    }
 
   public void reset() {
     robotDrive.resetModules();

@@ -163,6 +163,10 @@ public class Shooter extends SubsystemBase {
       );
   } 
 
+  public Command shooterIntake(){
+    return shooterPID(ShooterConstants.PIVOT_INTAKE_ANGLE);
+  }
+
   public Command shooterAmp(){
     return new ParallelCommandGroup(
       shooterPID(ShooterConstants.PIVOT_AMP_ANGLE),

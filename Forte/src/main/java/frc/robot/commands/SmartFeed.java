@@ -5,14 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerIntake.IndexerIntake;
 import frc.robot.subsystems.IndexerIntake.IndexerIntakeConstants;
+import frc.robot.subsystems.Shooter.Shooter;
 
 public class SmartFeed extends Command {
   /** Creates a new SmartFeed. */
   private IndexerIntake indexerIntake;
+  private Shooter shooter;
 
   private static DigitalInput indexerSensor;
 
@@ -44,10 +47,15 @@ public class SmartFeed extends Command {
 
     indexerHasNote = IndexerSensorHasNote();
 
+
     if(!indexerSensor.get() ){
+      shooter.shooterIdle();
       indexerIntake.setIntakeSpeed(0.1);
       indexerIntake.setIndexerSpeed(0);
+      // driver.getHID().setRumble(RumbleType.kBothRumble, 1);
+      // operator.getHID().setRumble(RumbleType.kBothRumble, 1);
     } else{
+      shooter.shooterIntake();
       indexerIntake.setIntakeSpeed(1.0);
       indexerIntake.setIndexerSpeed(0.25);
     }
