@@ -69,7 +69,7 @@ public class SwerveCommands {
 
           SmartDashboard.putBoolean("Field ", IS_FIELD);
 
-          if (IS_FIELD) {
+          if (true) {
             robotDrive.runSwerve(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                     // Convert from % to MPS
