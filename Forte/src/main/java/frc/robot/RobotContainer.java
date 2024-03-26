@@ -11,13 +11,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import frc.robot.commands.SmartFeed;
 import frc.robot.commands.SwerveCommands;
 import frc.robot.subsystems.Drive.Drive;
@@ -35,7 +33,7 @@ public class RobotContainer {
   private Shooter shooter;
   public static Boolean isField = true;
 
-  private CommandXboxController pilotController = new CommandXboxController(0);
+  private CommandXboxController driver = new CommandXboxController(0);
   private CommandXboxController operator = new CommandXboxController(1);
 
   private SmartFeed smartFeed;
@@ -82,7 +80,7 @@ public class RobotContainer {
             new IndexerIntake();
 
         smartFeed = 
-        new SmartFeed(indexerIntake);
+        new SmartFeed(indexerIntake, driver, operator);
 
         shooter = 
         new Shooter();
@@ -120,7 +118,7 @@ public class RobotContainer {
 
 
     public CommandXboxController getDriveController(){
-        return pilotController;
+        return driver;
       }
 
   /** Register commands with PathPlanner and add default autos to chooser */
@@ -153,11 +151,10 @@ public class RobotContainer {
     /* Drive with joysticks */
     robotDrive.setDefaultCommand(SwerveCommands.swerveDrive(
               robotDrive,
-              () -> -pilotController.getLeftY(),
-              () -> -pilotController.getLeftX(),
-              () -> pilotController.getRightX(),
+              () -> -driver.getLeftY(),
+              () -> -driver.getLeftX(),
+              () -> driver.getRightX(),
               isField));
-    pilotController.x().onTrue(new InstantCommand(() -> robotDrive.resetGyro()));
     
     operator.b().whileTrue(shooter.shooterSubwoofer());
     operator.b().whileFalse(shooter.shooterIdle());
@@ -190,9 +187,7 @@ public class RobotContainer {
     operator.povRight().whileTrue(shooter.shooterLob());
     operator.povRight().onFalse(shooter.shooterIdle());
 
-    pilotController.leftTrigger().onTrue(smartFeed);
-    pilotController.leftTrigger().onFalse(indexerIntake.INTAKE(0));
-    pilotController.x().onTrue(robotDrive.gyroReset());
+    driver.x().onTrue(robotDrive.gyroReset());
   }
 
   public Command getAutonomousCommand() {
