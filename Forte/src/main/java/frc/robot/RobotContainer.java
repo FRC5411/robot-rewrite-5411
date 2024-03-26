@@ -137,7 +137,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Forward Note Amp", indexerIntake.ampIntake());
 
-    NamedCommands.registerCommand("Intake Note", indexerIntake.smartFeedCommand());
+    NamedCommands.registerCommand("Intake Note", smartFeed);
   }
 
 

@@ -116,9 +116,9 @@ public class IndexerIntake extends SubsystemBase {
     return new InstantCommand(() -> setIndexerSpeed(demand));
   }
 
-  public Command smartFeedCommand(){
-    return new InstantCommand(()-> smartFeed());
-  }
+  // public Command smartFeedCommand(){
+  //   return new InstantCommand(()-> smartFeed());
+  // }
 
   public Command stopIntaker(){
     return new InstantCommand(() -> stopFeed());

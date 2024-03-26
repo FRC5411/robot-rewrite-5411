@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -129,31 +127,31 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command shootRPMAmp(){
-    return new InstantCommand(() -> shoot(0, 0.21));
+    return new InstantCommand(() -> shoot((0), (0.21)));
   }
 
   public Command shootRPMFeed(){
-    return new InstantCommand(() -> shoot(0.45, 0.45));
+    return new InstantCommand(() -> shoot((0.45), (0.45)));
   }
 
   public Command shootRPMSubwoofer(){
-    return new InstantCommand(() -> shoot(0.5, 0.5));
+    return new InstantCommand(() -> shoot((0.5), (0.5)));
   }
 
   public Command shootRPMLaser(){
-    return new InstantCommand(() -> shoot(0.8, 0.8));
+    return new InstantCommand(() -> shoot((0.8), (0.8)));
   }
 
   public Command shootRPMWing(){
-    return new InstantCommand(() -> shoot(0.7, 0.7));
+    return new InstantCommand(() -> shoot((0.7), (0.7)));
   }
 
   public Command shootRPMLob(){
-    return new InstantCommand(() -> shoot(0.3, 0.3));
+    return new InstantCommand(() -> shoot((0.3), (0.3)));
   }
 
   public Command reverseShoot(){
-    return new InstantCommand(() -> shoot(0.2, 0.2));
+    return new InstantCommand(() -> shoot((0.2), (0.2)));
   }
 
   public Command zeroShoot(){
@@ -161,7 +159,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command movePivotSlowUp(){
-    return new InstantCommand(() -> pivotMotor.set(0.3));
+    return new InstantCommand(() -> pivotMotor.set((0.3)));
   }
 
   public Command movePivotSlowDown(){
@@ -169,7 +167,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command movePivotZero(){
-    return new InstantCommand(() -> pivotMotor.set(0));
+    return new InstantCommand(() -> pivotMotor.set((0)));
   }
 
   public Command setShooterRPM(double demand){
