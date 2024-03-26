@@ -134,11 +134,6 @@ public class IndexerIntake extends SubsystemBase {
   
   @Override
    public void periodic() {
-    
-
-
-    // SmartDashboard.putBoolean("Intake Sensor Note Present", IntakeSensorHasNote());
-    // SmartDashboard.putBoolean("Indexer  Note Present", IndexerSensorHasNote());
     SmartDashboard.putNumber("Indexer Applied Output", currentIndexerAmp());
     SmartDashboard.putNumber("Intake Applied Output", currentIntakeAmp());
     

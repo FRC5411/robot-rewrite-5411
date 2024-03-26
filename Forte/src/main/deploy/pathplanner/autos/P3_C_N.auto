@@ -8,13 +8,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "P_C_N"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Intake Note"
+            "pathName": "C_N_T_N"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R_T_N"
           }
         }
       ]

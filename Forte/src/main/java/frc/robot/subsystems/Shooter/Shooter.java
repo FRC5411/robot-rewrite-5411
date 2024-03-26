@@ -75,9 +75,17 @@ public class Shooter extends SubsystemBase {
     return topMotor.getVelocity().getValueAsDouble();
   }
 
-  //TODO: Check papi
-  public double getPivotAppliedAmps(){
+  public double getPivotAppliedVoltage(){
     return pivotMotor.getAppliedOutput() * pivotMotor.getBusVoltage();
+  }
+
+  //TODO: CHECKK
+  public double getTopMotorAppliedVoltage(){
+    return topMotor.getSupplyVoltage().getValue();
+  }
+
+  public double getBottomMotorAppliedVoltage(){
+    return bottomMotor.getSupplyVoltage().getValue();
   }
 
   public Command shooterPID(double setpoint) {
@@ -233,12 +241,13 @@ public class Shooter extends SubsystemBase {
       shootRPMSubwoofer()
     );
   }
-
   
   @Override
    public void periodic() {
     SmartDashboard.putNumber("Shooter RPM", getShooterVelocity());
     SmartDashboard.putNumber("Shooter Angle", getPivotAngle());
-    SmartDashboard.putNumber("Shooter Temperature", getPivotAppliedAmps());
+    SmartDashboard.putNumber("Shooter Applied Amps", getPivotAppliedVoltage());
+    SmartDashboard.putNumber("Top Motor Applied Voltage", getTopMotorAppliedVoltage());
+    SmartDashboard.putNumber("Bottom Motor Applied Voltage", getBottomMotorAppliedVoltage());
    }
 }

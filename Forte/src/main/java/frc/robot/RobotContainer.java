@@ -6,8 +6,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,7 +49,7 @@ public class RobotContainer {
     try {
       autoChooser = AutoBuilder.buildAutoChooser();
     } catch (Exception e) {
-      autoChooser = new SendableChooser<Command>();
+      autoChooser = new SendableChooser<Command>(); 
       autoChooser.setDefaultOption("New Auto", shooter.shooterPodium());
     }
 
@@ -80,7 +78,7 @@ public class RobotContainer {
             new IndexerIntake();
 
         smartFeed = 
-        new SmartFeed(indexerIntake, driver, operator);
+        new SmartFeed(indexerIntake, operator);
 
         shooter = 
         new Shooter();
@@ -108,14 +106,6 @@ public class RobotContainer {
         break;
     }
   }
-
-  /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-     */
-
 
     public CommandXboxController getDriveController(){
         return driver;
@@ -154,7 +144,7 @@ public class RobotContainer {
               () -> -driver.getLeftY(),
               () -> -driver.getLeftX(),
               () -> driver.getRightX(),
-              isField));
+              true));
     
     operator.b().whileTrue(shooter.shooterSubwoofer());
     operator.b().whileFalse(shooter.shooterIdle());
@@ -174,7 +164,7 @@ public class RobotContainer {
     operator.rightBumper().whileTrue(smartFeed);
     operator.rightBumper().onFalse(indexerIntake.INTAKE((0)));
 
-    operator.leftBumper().onTrue(indexerIntake.INTAKE(-1));
+    operator.leftBumper().onTrue(indexerIntake.INTAKE((-1)));
     operator.leftBumper().onFalse(indexerIntake.INTAKE((0)));
 
     operator.rightTrigger().onTrue(indexerIntake.INTAKE((1)));
@@ -182,8 +172,10 @@ public class RobotContainer {
 
     operator.leftTrigger().onTrue(indexerIntake.ampIntake());
     operator.leftTrigger().onFalse(indexerIntake.INTAKE((0)));
+
     operator.povLeft().whileTrue(shooter.shooterLaser());
     operator.povLeft().onFalse(shooter.shooterIdle());
+
     operator.povRight().whileTrue(shooter.shooterLob());
     operator.povRight().onFalse(shooter.shooterIdle());
 
@@ -191,8 +183,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-        // An ExampleCommand will run in autonomous
-        return autoChooser.getSelected();
+      return autoChooser.getSelected();
     }
 
   public void reset() {

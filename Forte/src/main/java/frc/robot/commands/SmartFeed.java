@@ -23,7 +23,7 @@ public class SmartFeed extends Command {
 
 
 
-  public SmartFeed(IndexerIntake indexerIntake, CommandXboxController driver, CommandXboxController operator) {
+  public SmartFeed(IndexerIntake indexerIntake, CommandXboxController operator) {
     this.indexerIntake = indexerIntake;
     this.operator = operator;
 
@@ -37,8 +37,6 @@ public class SmartFeed extends Command {
     return indexerSensor.get();
   }
 
-
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
@@ -46,9 +44,6 @@ public class SmartFeed extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-
-
     if(!indexerSensor.get() ){
       shooter.shooterIdle();
       indexerIntake.setIntakeSpeed(0.1);

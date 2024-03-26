@@ -8,12 +8,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2PiecePath"
+            "pathName": "PodiumShotToNoteLine"
           }
         }
       ]
     }
   },
-  "folder": "Autons",
+  "folder": null,
   "choreoAuto": false
 }
