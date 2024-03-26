@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -40,6 +42,25 @@ public class Shooter extends SubsystemBase {
     config();
   }
 
+  private void config(){
+    pivotMotor.clearFaults();
+    pivotMotor.restoreFactoryDefaults();
+    pivotMotor.burnFlash();
+    pivotMotor.setSmartCurrentLimit((40));
+    pivotMotor.setInverted(false);
+    pivotMotor.setIdleMode(IdleMode.kBrake);
+
+    topMotor.clearStickyFaults();
+    topMotor.setNeutralMode(NeutralModeValue.Coast);
+    topMotor.setInverted(false);
+    topMotor.getConfigurator().apply(new TalonFXConfiguration().CurrentLimits.withSupplyCurrentLimit((25d)).withStatorCurrentLimit((20d)));
+
+    bottomMotor.clearStickyFaults();
+    bottomMotor.setNeutralMode(NeutralModeValue.Coast);
+    bottomMotor.setInverted(false);
+    bottomMotor.getConfigurator().apply(new TalonFXConfiguration().CurrentLimits.withSupplyCurrentLimit((25d)).withStatorCurrentLimit((20d)));
+  }
+
   public double getPivotAngle(){
     return (-pivotEncoder.getAbsolutePosition() * 360) + ShooterConstants.PIVOT_OFFSET;
   }
@@ -52,57 +73,14 @@ public class Shooter extends SubsystemBase {
     return pivotMotor.getEncoder().getVelocity();
   }
 
-  public void shootWing(){
-    topMotor.set(0.7);
-    bottomMotor.set(0.7);
-  }
-
-
-  public void shootSubwoofer(){
-    topMotor.set(0.50);
-    bottomMotor.set(0.50);
-  }
-
-  public void shootFeed(){
-    topMotor.set(0.45);
-    bottomMotor.set(0.45);
-  }
-
-  public void shootLaser(){
-    topMotor.set(0.80); 
-    bottomMotor.set(0.80);  
-  }
-
-  public void shootLob(){
-    topMotor.set(0.30);
-    bottomMotor.set(0.30);  
-  }
-
-  public void shootAmp(){
-    topMotor.set(0);
-    bottomMotor.set(0.21);
-  }
-  
-  public void motorZero(){
-    topMotor.set(0);
-    bottomMotor.set(0);
-    pivotMotor.set(0);
-  }
-
-  public void reverse(){
-    topMotor.set(0.2);
-    bottomMotor.set(0.2);
-  }
-
   public double getShooterVelocity(){
     return topMotor.getVelocity().getValueAsDouble();
   }
 
-  public void setShooterVelocity(double demand){
-    topMotor.setControl(new VelocityDutyCycle((demand / (60d))));
-    bottomMotor.setControl(new VelocityDutyCycle((demand / (60d))));
+  //TODO: Check papi
+  public double getPivotAppliedAmps(){
+    return pivotMotor.getAppliedOutput() * pivotMotor.getBusVoltage();
   }
-
 
   public Command shooterPID(double setpoint) {
     ProfiledPIDController pivotController;
@@ -134,29 +112,69 @@ public class Shooter extends SubsystemBase {
       );
   }
 
-//TODO: CHECK U SLAVE
-  public Command shooterRPM(double setpoint){
-    ProfiledPIDController RPMController;
-    RPMController = new ProfiledPIDController(
-      ShooterConstants.PIVOT_P,
-      ShooterConstants.PIVOT_I,
-      ShooterConstants.PIVOT_D, 
-      new TrapezoidProfile.Constraints(900, 900));
+  public void shoot(double topRoller, double bottomRoller){
+    topMotor.set(topRoller);
+    bottomMotor.set(bottomRoller);
+  }
+  
+  public void motorZero(){
+    topMotor.set(0);
+    bottomMotor.set(0);
+    pivotMotor.set(0);
+  }
 
-    return new FunctionalCommand(
-      () -> {
-        RPMController.reset(getShooterVelocity());
-      }, 
-      () -> {
-        setShooterVelocity((-RPMController.calculate(getPivotAngle(), setpoint)));
-      }, 
-      (interrupted) -> {
+  public void setShooterVelocity(double demand){
+    topMotor.setControl(new VelocityDutyCycle((demand / (60d))));
+    bottomMotor.setControl(new VelocityDutyCycle((demand / (60d))));
+  }
 
-      }, 
-      () -> RPMController.atGoal(), 
-      this
-      );
-  } 
+  public Command shootRPMAmp(){
+    return new InstantCommand(() -> shoot(0, 0.21));
+  }
+
+  public Command shootRPMFeed(){
+    return new InstantCommand(() -> shoot(0.45, 0.45));
+  }
+
+  public Command shootRPMSubwoofer(){
+    return new InstantCommand(() -> shoot(0.5, 0.5));
+  }
+
+  public Command shootRPMLaser(){
+    return new InstantCommand(() -> shoot(0.8, 0.8));
+  }
+
+  public Command shootRPMWing(){
+    return new InstantCommand(() -> shoot(0.7, 0.7));
+  }
+
+  public Command shootRPMLob(){
+    return new InstantCommand(() -> shoot(0.3, 0.3));
+  }
+
+  public Command reverseShoot(){
+    return new InstantCommand(() -> shoot(0.2, 0.2));
+  }
+
+  public Command zeroShoot(){
+    return new InstantCommand(() -> motorZero());
+  }
+
+  public Command movePivotSlowUp(){
+    return new InstantCommand(() -> pivotMotor.set(0.3));
+  }
+
+  public Command movePivotSlowDown(){
+    return new InstantCommand(() -> pivotMotor.set(-0.3));
+  }
+
+  public Command movePivotZero(){
+    return new InstantCommand(() -> pivotMotor.set(0));
+  }
+
+  public Command setShooterRPM(double demand){
+    return new InstantCommand(() -> setShooterVelocity(demand));
+  }
 
   public Command shooterIntake(){
     return shooterPID(ShooterConstants.PIVOT_INTAKE_ANGLE);
@@ -218,78 +236,11 @@ public class Shooter extends SubsystemBase {
     );
   }
 
-  public Command shootRPMAmp(){
-    return new InstantCommand(() -> shootAmp());
-  }
-
-  public Command shootRPMFeed(){
-    return new InstantCommand(() -> shootFeed());
-  }
-
-  public Command shootRPMSubwoofer(){
-    return new InstantCommand(() -> shootSubwoofer());
-  }
-
-  public Command shootRPMLaser(){
-    return new InstantCommand(() -> shootLaser());
-  }
-
-  public Command shootRPMWing(){
-    return new InstantCommand(() -> shootWing());
-  }
-
-  public Command shootRPMLob(){
-    return new InstantCommand(() -> shootLob());
-  }
-
-  public Command reverseShoot(){
-    return new InstantCommand(() -> reverse());
-  }
-
-  public Command zeroShoot(){
-    return new InstantCommand(() -> motorZero());
-  }
-
-  public Command movePivotSlowUp(){
-    return new InstantCommand(() -> pivotMotor.set(0.3));
-  }
-
-  public Command movePivotSlowDown(){
-    return new InstantCommand(() -> pivotMotor.set(-0.3));
-  }
-
-  public Command movePivotZero(){
-    return new InstantCommand(() -> pivotMotor.set(0));
-  }
-
-  public Command setShooterRPM(double demand){
-    return new InstantCommand(() -> setShooterVelocity(demand));
-  }
-
-  private void config(){
-    pivotMotor.clearFaults();
-    pivotMotor.restoreFactoryDefaults();
-    pivotMotor.burnFlash();
-    pivotMotor.setSmartCurrentLimit((40));
-    pivotMotor.setInverted(false);
-    pivotMotor.setIdleMode(IdleMode.kBrake);
-
-    topMotor.clearStickyFaults();
-    topMotor.setNeutralMode(NeutralModeValue.Coast);
-    topMotor.setInverted(false);
-    topMotor.getConfigurator().apply(new TalonFXConfiguration().CurrentLimits.withSupplyCurrentLimit((25d)).withStatorCurrentLimit((20d)));
-
-    bottomMotor.clearStickyFaults();
-    bottomMotor.setNeutralMode(NeutralModeValue.Coast);
-    bottomMotor.setInverted(false);
-    bottomMotor.getConfigurator().apply(new TalonFXConfiguration().CurrentLimits.withSupplyCurrentLimit((25d)).withStatorCurrentLimit((20d)));
-  }
   
   @Override
    public void periodic() {
-    SmartDashboard.putNumber("Shooter Angle Degrees", getPivotAngle());
-    SmartDashboard.putNumber("Target Setpoint man", ShooterConstants.PIVOT_SUBWOOFER_ANGLE);
     SmartDashboard.putNumber("Shooter RPM", getShooterVelocity());
-    SmartDashboard.putNumber("Shooter RPM Setpoint", 20);
+    SmartDashboard.putNumber("Shooter Angle", getPivotAngle());
+    SmartDashboard.putNumber("Shooter Temperature", getPivotAppliedAmps());
    }
 }

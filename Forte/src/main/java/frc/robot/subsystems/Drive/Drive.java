@@ -70,7 +70,6 @@ public class Drive extends SubsystemBase {
   private boolean areModulesOrienting = false;
 
   private GyroIO gyroIO;
-  private static GyroIOPigeon2 gyro = new GyroIOPigeon2();
   private GyroIOInputsAutoLogged gyroIOInputs = new GyroIOInputsAutoLogged();
 
   private Module[] modules = new Module[4]; // FL FR BL BR
@@ -219,11 +218,6 @@ public class Drive extends SubsystemBase {
                 setpointStates[i]); // setDesiredState returns the optimized state
       }
     }
-
-    // Logger.recordOutput("Drive/Swerve/Setpoints", setpointStates);
-    // Logger.recordOutput("Drive/Swerve/SetpointsOptimized", optimizedSetpointStates);
-  
-
 
   /** Custom method for discretizing swerve speeds */
   private ChassisSpeeds discretize(ChassisSpeeds speeds) {
