@@ -9,6 +9,10 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
+import static org.mockito.ArgumentMatchers.byteThat;
+
+import java.util.concurrent.atomic.DoubleAccumulator;
+
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -21,8 +25,10 @@ import com.revrobotics.SparkPIDController;
 public class ModuleIOSparkMax implements ModuleIO {
   private final double DRIVE_GEAR_RATIO = 5.357 / 1.0;
   private final double AZIMUTH_GEAR_RATIO = 150.0 / 7.0;
-  private final double CIRCUMFRENCE_METERS = 2.0 * Math.PI * (5.08 / 100);
+  private final double CIRCUMFERENCE_METERS = 2.0 * Math.PI * (5.08 / 100);
 
+  private final DoubleAccumulator DRIVE_POSITION = new DoubleAccumulator(
+    (Accumulated, Velocity) -> Accumulated += Velocity * 0.02d,  (0d));
   private CANSparkMax driveMotor;
   private CANSparkMax azimuthMotor;
 
@@ -134,9 +140,10 @@ public class ModuleIOSparkMax implements ModuleIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    inputs.drivePositionM = driveEncoder.getPosition() * CIRCUMFRENCE_METERS / DRIVE_GEAR_RATIO;
+    inputs.drivePositionM = DRIVE_POSITION.get();
     inputs.driveVelocityMPS =
-        driveEncoder.getVelocity() * CIRCUMFRENCE_METERS / (60.0 * DRIVE_GEAR_RATIO);
+        driveEncoder.getVelocity() * CIRCUMFERENCE_METERS / (60.0 * DRIVE_GEAR_RATIO);
+    DRIVE_POSITION.accumulate(inputs.driveVelocityMPS);    
     inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
     inputs.driveCurrentAmps = new double[] {driveMotor.getOutputCurrent()};
     inputs.driveTemperatureCelsius = new double[] {driveMotor.getMotorTemperature()};
@@ -169,7 +176,7 @@ public class ModuleIOSparkMax implements ModuleIO {
   @Override
   public void setDriveVelocity(double velocityMPS) {
     // Adjusting to RPM
-    double adjustedVelocity = 60.0 * (velocityMPS / CIRCUMFRENCE_METERS);
+    double adjustedVelocity = 60.0 * (velocityMPS / CIRCUMFERENCE_METERS);
 
     double feedforwardOutput = driveFeedforward.calculate(adjustedVelocity);
     driveFeedback.setReference(adjustedVelocity, ControlType.kVelocity, 0, feedforwardOutput);

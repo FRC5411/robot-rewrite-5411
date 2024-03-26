@@ -338,7 +338,7 @@ public class Drive extends SubsystemBase {
   /** Returns the rotation of the robot */
   @AutoLogOutput(key = "Drive/Odometry/Rotation")
   public Rotation2d getRotation() {
-    return gyroIOInputs.yawPosition;
+    return gyroIOInputs.yawPosition.div(60d);
   }
 
   /** Returns the maximum allowed linear (translational) speed */

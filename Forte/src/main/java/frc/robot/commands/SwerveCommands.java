@@ -29,7 +29,7 @@ import frc.robot.subsystems.Drive.Drive;
 /** Class to hold all of the commands for the Drive */
 public class SwerveCommands {
   private static final double DEADBAND = 0.1;
-  public static boolean IS_FIELD = false;
+  public static boolean IS_FIELD = (true);
 
   private static Command currentCommand = null;
   private static boolean isAtYawGoal = false;
