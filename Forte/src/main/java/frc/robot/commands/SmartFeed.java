@@ -5,8 +5,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.IndexerIntake.IndexerIntake;
 import frc.robot.subsystems.IndexerIntake.IndexerIntakeConstants;
 import frc.robot.subsystems.Shooter.Shooter;
@@ -15,14 +17,15 @@ public class SmartFeed extends Command {
   /** Creates a new SmartFeed. */
   private IndexerIntake indexerIntake;
   private Shooter shooter;
+  private CommandXboxController operator;
 
   private static DigitalInput indexerSensor;
 
-  private boolean indexerHasNote;
 
 
-  public SmartFeed(IndexerIntake indexerIntake) {
+  public SmartFeed(IndexerIntake indexerIntake, CommandXboxController driver, CommandXboxController operator) {
     this.indexerIntake = indexerIntake;
+    this.operator = operator;
 
     indexerSensor = new DigitalInput(IndexerIntakeConstants.INDEXER_SENSOR_ID);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -44,20 +47,22 @@ public class SmartFeed extends Command {
   @Override
   public void execute() {
 
-    indexerHasNote = IndexerSensorHasNote();
 
 
     if(!indexerSensor.get() ){
       shooter.shooterIdle();
       indexerIntake.setIntakeSpeed(0.1);
       indexerIntake.setIndexerSpeed(0);
-      // driver.getHID().setRumble(RumbleType.kBothRumble, 1);
-      // operator.getHID().setRumble(RumbleType.kBothRumble, 1);
+      rumbleOperator().withTimeout(1);
     } else{
       shooter.shooterIntake();
       indexerIntake.setIntakeSpeed(1.0);
       indexerIntake.setIndexerSpeed(0.25);
     }
+  }
+
+  public Command rumbleOperator(){
+    return new InstantCommand(() -> operator.getHID().setRumble(RumbleType.kBothRumble, 1));
   }
 
   // Called once the command ends or is interrupted.

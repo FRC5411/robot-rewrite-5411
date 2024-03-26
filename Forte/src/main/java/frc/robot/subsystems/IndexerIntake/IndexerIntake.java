@@ -22,18 +22,12 @@ public class IndexerIntake extends SubsystemBase {
   private CANSparkMax indexerMotor;
   // private DigitalInput intakeSensor;
   // private DigitalInput indexerSensor;
-  private boolean indexerHasNote;
-  private boolean intakeHasNote;
+
 
   public IndexerIntake() {
     intakeMotor = new CANSparkMax(IndexerIntakeConstants.INTAKE_ID, MotorType.kBrushless);
     indexerMotor = new CANSparkMax(IndexerIntakeConstants.INDEXER_ID, MotorType.kBrushless);
 
-    // intakeSensor = new DigitalInput(IndexerIntakeConstants.INTAKE_SENSOR_ID);
-    // indexerSensor = new DigitalInput(IndexerIntakeConstants.INDEXER_SENSOR_ID);
-
-    indexerHasNote = false;
-    intakeHasNote = false;
 
     config();
   }

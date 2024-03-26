@@ -52,7 +52,6 @@ public class Drive extends SubsystemBase {
   public static final ModuleLimits MODULE_LIMITS =
       new ModuleLimits(MAX_LINEAR_SPEED_MPS, MAX_LINEAR_SPEED_MPS * 5, MAX_ANGULAR_SPEED_MPS);
 
-  private final Translation2d[] MODULE_TRANSLATIONS = getModuleTranslations();
   private final SwerveDriveKinematics KINEMATICS = getKinematics();
   private ChassisSpeeds desiredChassisSpeeds = new ChassisSpeeds();
 
@@ -67,7 +66,6 @@ public class Drive extends SubsystemBase {
   //         });
   // private SwerveSetpointGenerator setpointGenerator =
   //     new SwerveSetpointGenerator(KINEMATICS);
-  private boolean areModulesOrienting = false;
 
   private GyroIO gyroIO;
   private GyroIOInputsAutoLogged gyroIOInputs = new GyroIOInputsAutoLogged();
@@ -85,7 +83,7 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(KINEMATICS, getRotation(), getModulePositions(), currentPose);
 
   private PIDConstants translationPathplannerConstants = new PIDConstants(1.25, 0.0, 0.0);
-  private PIDConstants rotationPathplannerConstants = new PIDConstants(1.25, 0.0, 0.0);
+  private PIDConstants rotationPathplannerConstants = new PIDConstants(1.25, 0.0, 0.0); //TODO: Raise Proportional Gain on Rotation
   private boolean PProtationTargetOverride = false;
 
   private LinearFilter xFilter = LinearFilter.movingAverage(5);
@@ -111,7 +109,7 @@ public class Drive extends SubsystemBase {
 
     // Configure PathPlanner
     AutoBuilder.configureHolonomic(
-        odometry::getPoseMeters,
+        this::getOdometryPose,
         this::setPose,
         this::getRobotRelativeSpeeds,
         this::runSwerve,
@@ -332,7 +330,8 @@ public class Drive extends SubsystemBase {
   /** Returns the rotation of the robot */
   @AutoLogOutput(key = "Drive/Odometry/Rotation")
   public Rotation2d getRotation() {
-    return gyroIOInputs.yawPosition.div(60d);
+    final var FudgeFactor = (60d); //Rough Estimate, We don't know why we have this ¯\_(ツ)_/¯
+    return gyroIOInputs.yawPosition.div(FudgeFactor);
   }
 
   /** Returns the maximum allowed linear (translational) speed */

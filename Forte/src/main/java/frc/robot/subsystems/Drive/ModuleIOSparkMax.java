@@ -9,8 +9,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
-import static org.mockito.ArgumentMatchers.byteThat;
-
 import java.util.concurrent.atomic.DoubleAccumulator;
 
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -140,10 +138,10 @@ public class ModuleIOSparkMax implements ModuleIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    inputs.drivePositionM = DRIVE_POSITION.get();
-    inputs.driveVelocityMPS =
-        driveEncoder.getVelocity() * CIRCUMFERENCE_METERS / (60.0 * DRIVE_GEAR_RATIO);
+    inputs.drivePositionM = DRIVE_POSITION.doubleValue();
+    inputs.driveVelocityMPS = driveEncoder.getVelocity() * CIRCUMFERENCE_METERS / (60.0 * DRIVE_GEAR_RATIO);
     DRIVE_POSITION.accumulate(inputs.driveVelocityMPS);    
+
     inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
     inputs.driveCurrentAmps = new double[] {driveMotor.getOutputCurrent()};
     inputs.driveTemperatureCelsius = new double[] {driveMotor.getMotorTemperature()};

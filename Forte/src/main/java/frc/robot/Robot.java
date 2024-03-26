@@ -32,7 +32,6 @@ public class Robot extends LoggedRobot {
   private boolean on = true;
   private Color m_EyeColor = Color.kPurple;
   private Color m_BackgroundColor = Color.kGreen;
-  private int m_Length;
   private int m_eyePosition = 0;
   private int m_scanDirection = 1;
 
