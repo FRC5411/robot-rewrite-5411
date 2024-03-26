@@ -50,7 +50,7 @@ public class RobotContainer {
       autoChooser = AutoBuilder.buildAutoChooser();
     } catch (Exception e) {
       autoChooser = new SendableChooser<Command>(); 
-      autoChooser.setDefaultOption("New Auto", shooter.shooterPodium());
+      autoChooser.setDefaultOption("P3_C_N", shooter.shooterPodium());
     }
 
 
