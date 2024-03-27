@@ -26,6 +26,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.autos.OnePieceMobilityCenter;
 import frc.robot.autos.OnePieceMobilitySides;
+import frc.robot.autos.TwoPieceCenter;
 import frc.robot.commands.DriverIntakeFeedback;
 import frc.robot.commands.SmartFeed;
 import frc.robot.commands.SwerveCommands;
@@ -54,6 +55,7 @@ public class RobotContainer {
 
   private OnePieceMobilityCenter onePieceMobilityCenter;
   private OnePieceMobilitySides onePieceMobilitySides;
+  private TwoPieceCenter twoPieceCenter;
 
 
 
@@ -75,6 +77,8 @@ public class RobotContainer {
     // Set up autonomous pathplanner routines
     AutonChooser.addOption("Auto: Center One Piece Mobility", onePieceMobilityCenter);
     AutonChooser.addOption("Auto: Sides One Piece Mobility", onePieceMobilitySides);
+    AutonChooser.addOption("Auto: Center Two Piece Mobility", twoPieceCenter);
+
 
   }
 
@@ -97,6 +101,8 @@ public class RobotContainer {
 
         onePieceMobilityCenter = new OnePieceMobilityCenter(robotDrive, indexerIntake, shooter);
         onePieceMobilitySides = new OnePieceMobilitySides(robotDrive, indexerIntake, shooter);
+        twoPieceCenter = new TwoPieceCenter(robotDrive, indexerIntake, shooter, smartFeed);
+
 
     
 
