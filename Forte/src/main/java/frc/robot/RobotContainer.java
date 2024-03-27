@@ -50,7 +50,7 @@ public class RobotContainer {
 
   private SmartFeed smartFeed;
 
-      private SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoChooser;
 
 
   
@@ -91,11 +91,11 @@ public class RobotContainer {
 
         indexerIntake = 
             new IndexerIntake();
+        shooter = new Shooter();
         smartFeed = new SmartFeed(indexerIntake);
 
     
 
-        shooter = new Shooter();
         break;
       case SIM:
         robotDrive =
@@ -185,7 +185,9 @@ public class RobotContainer {
     operator.povUp().whileFalse(shooter.shooterIdle());
 
     operator.rightBumper().whileTrue(smartFeed);
+    operator.rightBumper().whileTrue(shooter.shooterIntake());
     operator.rightBumper().onFalse(indexerIntake.INTAKE(0));
+    operator.rightBumper().onFalse(shooter.shooterIdle());
 
     operator.leftBumper().onTrue(indexerIntake.INTAKE(-1));
     operator.leftBumper().onFalse(indexerIntake.INTAKE(0));
@@ -200,8 +202,6 @@ public class RobotContainer {
     operator.povRight().whileTrue(shooter.shooterLob());
     operator.povRight().onFalse(shooter.shooterIdle());
 
-    pilotController.leftTrigger().onTrue(indexerIntake.smartFeedCommand());
-    pilotController.leftTrigger().onFalse(indexerIntake.INTAKE(0));
     pilotController.x().onTrue(robotDrive.gyroReset());
   }
 
