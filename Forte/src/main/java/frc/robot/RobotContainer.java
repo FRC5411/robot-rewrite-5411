@@ -24,6 +24,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import frc.robot.autos.OnePieceMobilityCenter;
+import frc.robot.autos.OnePieceMobilitySides;
 import frc.robot.commands.DriverIntakeFeedback;
 import frc.robot.commands.SmartFeed;
 import frc.robot.commands.SwerveCommands;
@@ -50,7 +52,9 @@ public class RobotContainer {
 
   private SmartFeed smartFeed;
 
-  private SendableChooser<Command> autoChooser;
+  private OnePieceMobilityCenter onePieceMobilityCenter;
+  private OnePieceMobilitySides onePieceMobilitySides;
+
 
 
   
@@ -60,21 +64,18 @@ public class RobotContainer {
 
     initializeSubsystems();
 
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("autoChooser", autoChooser);
-
+    
     configureTriggers();
 
     // Use assisted control by default
     configureButtonBindings();
 
-    try {
-      AutonChooser =
-          new LoggedDashboardChooser<>("Autonomous Selector", AutoBuilder.buildAutoChooser());
-    } catch (Exception e) {
-      AutonChooser = new LoggedDashboardChooser<>("Autonomous Selector");
-      AutonChooser.addDefaultOption("New Auto", shooter.shooterPodium());
-    }
+    AutonChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    // Set up autonomous pathplanner routines
+    AutonChooser.addOption("Auto: Center One Piece Mobility", onePieceMobilityCenter);
+    AutonChooser.addOption("Auto: Sides One Piece Mobility", onePieceMobilitySides);
+
   }
 
   /** Instantiate subsystems */
@@ -93,6 +94,9 @@ public class RobotContainer {
             new IndexerIntake();
         shooter = new Shooter();
         smartFeed = new SmartFeed(indexerIntake);
+
+        onePieceMobilityCenter = new OnePieceMobilityCenter(robotDrive, indexerIntake, shooter);
+        onePieceMobilitySides = new OnePieceMobilitySides(robotDrive, indexerIntake, shooter);
 
     
 
@@ -207,7 +211,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return autoChooser.getSelected();
+        return AutonChooser.get();
     }
 
   public void reset() {

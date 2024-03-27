@@ -221,6 +221,10 @@ public class Drive extends SubsystemBase {
       }
     }
 
+    public Command runSwerveCommand(ChassisSpeeds speeds){
+      return new InstantCommand(() -> runSwerve(speeds));
+    }
+
     // Logger.recordOutput("Drive/Swerve/Setpoints", setpointStates);
     // Logger.recordOutput("Drive/Swerve/SetpointsOptimized", optimizedSetpointStates);
   
